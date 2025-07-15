@@ -1,0 +1,14 @@
+//
+//  UIColor+AppColors.swift
+//  PuppyBox
+//
+//  Created by 김우성 on 7/15/25.
+//
+
+import UIKit
+
+extension UIColor {
+  static let appPrimary: UIColor = {
+    return UIColor(red: 229/255.0, green: 66/255.0, blue: 53/255.0, alpha: 1.0)
+  } ()
+}
