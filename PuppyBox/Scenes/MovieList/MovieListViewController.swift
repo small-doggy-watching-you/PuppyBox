@@ -5,23 +5,36 @@
 //  Created by 김우성 on 7/15/25.
 //
 
-import UIKit
 import SnapKit
 import Then
+import UIKit
 
 class MovieListViewController: UIViewController {
-    private let logoImageView = UIImageView().then {
-        $0.image = UIImage(named: "PuppyBoxLogo")
-        $0.contentMode = .scaleAspectFit
-    }
+
     private let labelImageView = UIImageView().then {
         $0.image = UIImage(named: "PuppyBoxLabel")
         $0.contentMode = .scaleAspectFit
     }
 
+    private let logoImageView = UIImageView().then {
+        $0.image = UIImage(named: "PuppyBoxLogo")
+        $0.contentMode = .scaleAspectFit
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .white
         setupHeader()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
     }
 
     private func setupHeader() {
