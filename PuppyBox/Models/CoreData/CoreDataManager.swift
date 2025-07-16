@@ -21,7 +21,7 @@ final class CoreDataManager {
         }
         return container
     }()
-
+    
     // 앱 전역에서 사용할 컨텍스트를 간편하게 접근할 수 있도록 별도 프로퍼티로 노출
     var context: NSManagedObjectContext {
         persistentContainer.viewContext
@@ -38,4 +38,37 @@ final class CoreDataManager {
         }
     }
     
+    private func createBasicAccount() {
+        // 관리자 계정 생성
+        let admin = Account(context: context)
+        admin.id = UUID()
+        admin.userId = "admin"
+        admin.name = "관리자"
+        admin.password = "admin123"
+        admin.email = "admin@example.com"
+        admin.phone = "010-0001-0001"
+        admin.profile = "AdminProfile"
+        admin.isAdmin = true
+        
+        // 게스트 계정 생성
+        let guest = Account(context: context)
+        guest.id = UUID()
+        guest.userId = "guest"
+        guest.name = "게스트"
+        guest.password = "guest123"
+        guest.email = "guest@example.com"
+        guest.phone = "010-0001-0002"
+        guest.profile = "GuestProfile"
+        guest.isAdmin = false
+        
+        saveContext()
+        print("기본 계정 생성 완료")
+    }
+    
+    // 모든 데이터 추출함수
+    func fetchAllAcCount() -> [Account] {
+        let fetchRequest: NSFetchRequest<Account> = Account.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
+        return (try? context.fetch(fetchRequest)) ?? []
+    }
 }

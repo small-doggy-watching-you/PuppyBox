@@ -23,6 +23,7 @@ extension Account {
     @NSManaged public var profile: String?
     @NSManaged public var name: String
     @NSManaged public var userId: String
+    @NSManaged public var isAdmin: Bool
 
 }
 
