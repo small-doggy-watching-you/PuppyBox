@@ -4,12 +4,12 @@ import UIKit
 
 final class CoreDataManager {
     
+    // MARK: - Initializers
+    private init() {}
+    
     // MARK: - Properties
     // 싱글톤 패턴을 사용해서 어디서든 CoreDataManager.shared로 접근할 수 있게 함
     static let shared = CoreDataManager()
-    
-    // MARK: - Initializers
-    private init() {}
     
     // CoreData의 저장소(= 데이터베이스)를 앱에 로드함, 이 안에는 SQLite 백엔드가 자동으로 설정됨
     lazy var persistentContainer: NSPersistentContainer = {
@@ -27,6 +27,8 @@ final class CoreDataManager {
         persistentContainer.viewContext
     }
     
+    
+    // MARK: Methods
     // 컨텍스트 저장
     private func saveContext() {
         if context.hasChanges {
@@ -38,7 +40,8 @@ final class CoreDataManager {
         }
     }
     
-     func createBasicAccount() {
+    // 기본계정 생성
+    func createBasicAccount() {
         // 관리자 계정 생성
         let admin = Account(context: context)
         admin.id = UUID()
@@ -71,4 +74,23 @@ final class CoreDataManager {
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
         return (try? context.fetch(fetchRequest)) ?? []
     }
+    
+    // 기본 데이터 삭제함수 (필요시 호출해서 계정정보 삭제)
+    func resetAllAccounts() {
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Account.fetchRequest()
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        
+        do {
+            try context.execute(deleteRequest)
+            try context.save()
+            print("모든 계정 삭제 완료")
+        } catch {
+            print("계정 삭제 실패: \(error)")
+        }
+        
+        // UserDefaults 키 초기화
+        UserDefaults.standard.removeObject(forKey: "isBasicAccountExist")
+        print(" UserDefaults 상태 초기화 완료")
+    }
+    
 }
