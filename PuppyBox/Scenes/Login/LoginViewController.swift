@@ -8,12 +8,12 @@ final class LoginViewController: UIViewController {
     
     // MARK: - Properties
     private let logoOriginSize:CGFloat = 131 / 512 // 로고 원본 사이즈
-    private let logoWidth:CGFloat = 200
+    private let logoWidth:CGFloat = 150
     
     // MARK: - UI Components
     private let logoImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.image = UIImage(named: "PuppyBoxLogo")
+        $0.image = UIImage(named: "PuppyBoxLabel")
     }
     
     private let loginLabel = UILabel().then {
@@ -47,19 +47,25 @@ final class LoginViewController: UIViewController {
     
     private let wrongPasswordLabel = UILabel().then {
         $0.text = "비밀번호를 잘못 입력했습니다."
-        $0.font = .systemFont(ofSize: 10, weight: .regular)
+        $0.font = .systemFont(ofSize: 12, weight: .regular)
         $0.textColor = .red
     }
     
     private let alreadyAccountLabel = UILabel().then {
         $0.text = "아직 회원가입을 안하셨나요?"
-        $0.font = .systemFont(ofSize: 10, weight: .regular)
+        $0.font = .systemFont(ofSize: 12, weight: .regular)
+        $0.textColor = .secondaryLabel
+    }
+    
+    private let deviderLabel = UILabel().then {
+        $0.text = "|"
+        $0.font = .systemFont(ofSize: 12, weight: .bold)
         $0.textColor = .secondaryLabel
     }
     
     private let joinLabel = UILabel().then {
         $0.text = "회원가입"
-        $0.font = .systemFont(ofSize: 10, weight: .bold)
+        $0.font = .systemFont(ofSize: 12, weight: .bold)
         $0.textColor = .secondaryLabel
     }
     
@@ -70,13 +76,35 @@ final class LoginViewController: UIViewController {
         $0.backgroundColor = .appPrimary
     }
     
+    private let joinStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 5
+    }
+    
     // MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
-        view.addSubview(logoImage)
-        view.addSubview(loginLabel)
+        let itemList = [
+            logoImage,
+            loginLabel,
+            idLabel,
+            idTextField,
+            passwordLabel,
+            passwordLabelTextField,
+            wrongPasswordLabel,
+            joinStackView,
+            loginButton
+        ]
+        
+        for item in itemList{
+            view.addSubview(item)
+        }
+        
+        joinStackView.addArrangedSubview(alreadyAccountLabel)
+        joinStackView.addArrangedSubview(deviderLabel)
+        joinStackView.addArrangedSubview(joinLabel)
         
         logoImage.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(100)
@@ -88,6 +116,46 @@ final class LoginViewController: UIViewController {
         loginLabel.snp.makeConstraints {
             $0.top.equalTo(logoImage.snp.bottom).offset(10)
             $0.centerX.equalToSuperview()
+        }
+        
+        idLabel.snp.makeConstraints {
+            $0.top.equalTo(loginLabel.snp.bottom).offset(50)
+            $0.leading.equalTo(view.safeAreaLayoutGuide).offset(20)
+        }
+        
+        idTextField.snp.makeConstraints{
+            $0.top.equalTo(idLabel.snp.bottom).offset(10)
+            $0.leading.equalTo(idLabel)
+            $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.height.equalTo(40)
+        }
+        
+        passwordLabel.snp.makeConstraints {
+            $0.top.equalTo(idTextField.snp.bottom).offset(25)
+            $0.leading.equalTo(idLabel)
+        }
+        
+        passwordLabelTextField.snp.makeConstraints {
+            $0.top.equalTo(passwordLabel.snp.bottom).offset(10)
+            $0.leading.equalTo(idLabel)
+            $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.height.equalTo(40)
+        }
+        
+        wrongPasswordLabel.snp.makeConstraints{
+            $0.top.equalTo(passwordLabelTextField.snp.bottom).offset(5)
+            $0.left.equalTo(idLabel)
+        }
+        
+        joinStackView.snp.makeConstraints {
+            $0.top.equalTo(passwordLabelTextField.snp.bottom).offset(50)
+            $0.centerX.equalToSuperview()
+        }
+        
+        loginButton.snp.makeConstraints {
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(30)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)
+            $0.height.equalTo(50)
         }
     }
 
