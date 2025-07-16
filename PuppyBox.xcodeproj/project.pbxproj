@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		FE41B3A92E27387000BD2D22 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = FE41B3A82E27387000BD2D22 /* SnapKit */; };
+		FE41B3AC2E27387A00BD2D22 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = FE41B3AB2E27387A00BD2D22 /* Then */; };
+		FE41B3B42E273DE800BD2D22 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = FE41B3B32E273DE800BD2D22 /* Alamofire */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		36562E882E2674BC001F04E8 /* PuppyBox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PuppyBox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -14,7 +20,7 @@
 		36562E9D2E2674BD001F04E8 /* Exceptions for "PuppyBox" folder in "PuppyBox" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Resources/Info.plist,
 			);
 			target = 36562E872E2674BC001F04E8 /* PuppyBox */;
 		};
@@ -36,6 +42,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FE41B3B42E273DE800BD2D22 /* Alamofire in Frameworks */,
+				FE41B3A92E27387000BD2D22 /* SnapKit in Frameworks */,
+				FE41B3AC2E27387A00BD2D22 /* Then in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +87,9 @@
 			);
 			name = PuppyBox;
 			packageProductDependencies = (
+				FE41B3A82E27387000BD2D22 /* SnapKit */,
+				FE41B3AB2E27387A00BD2D22 /* Then */,
+				FE41B3B32E273DE800BD2D22 /* Alamofire */,
 			);
 			productName = PuppyBox;
 			productReference = 36562E882E2674BC001F04E8 /* PuppyBox.app */;
@@ -107,6 +119,11 @@
 			);
 			mainGroup = 36562E7F2E2674BC001F04E8;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				FE41B3A72E27387000BD2D22 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				FE41B3AA2E27387A00BD2D22 /* XCRemoteSwiftPackageReference "Then" */,
+				FE41B3B22E273DE800BD2D22 /* XCRemoteSwiftPackageReference "Alamofire" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 36562E892E2674BC001F04E8 /* Products */;
 			projectDirPath = "";
@@ -147,7 +164,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = LW9AR5U74A;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = PuppyBox/Info.plist;
+				INFOPLIST_FILE = PuppyBox/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -179,7 +196,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = LW9AR5U74A;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = PuppyBox/Info.plist;
+				INFOPLIST_FILE = PuppyBox/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -345,6 +362,51 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		FE41B3A72E27387000BD2D22 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+		FE41B3AA2E27387A00BD2D22 /* XCRemoteSwiftPackageReference "Then" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/devxoul/Then";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
+		FE41B3B22E273DE800BD2D22 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FE41B3A82E27387000BD2D22 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FE41B3A72E27387000BD2D22 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		FE41B3AB2E27387A00BD2D22 /* Then */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FE41B3AA2E27387A00BD2D22 /* XCRemoteSwiftPackageReference "Then" */;
+			productName = Then;
+		};
+		FE41B3B32E273DE800BD2D22 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FE41B3B22E273DE800BD2D22 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 36562E802E2674BC001F04E8 /* Project object */;
 }

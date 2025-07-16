@@ -8,7 +8,5 @@
 import UIKit
 
 extension UIColor {
-  static let appPrimary: UIColor = {
-    return UIColor(red: 229/255.0, green: 66/255.0, blue: 53/255.0, alpha: 1.0)
-  } ()
+    static let appPrimary: UIColor = .init(red: 229 / 255.0, green: 66 / 255.0, blue: 53 / 255.0, alpha: 1.0)
 }
