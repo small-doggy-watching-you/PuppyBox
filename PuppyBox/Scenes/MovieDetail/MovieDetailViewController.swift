@@ -15,16 +15,22 @@ import UIKit
 
 class MovieDetailViewController: UIViewController {
     private let movieDetailView = MovieDetailView()
-    private let movieDetailViewModel = MovieDetailViewModel()
+    private let viewModel = MovieDetailViewModel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
+        setupView()
         
+    }
+    
+    private func setupView() {
+        view.backgroundColor = .black
+        view.addSubview(movieDetailView)
+        movieDetailView.frame = view.bounds
     }
 
     private func bindViewModel() {
-        movieDetailViewModel.onStateChanged = { [weak self] state in
+        viewModel.onStateChanged = { [weak self] state in
             DispatchQueue.main.async {
                 self?.updateUI(with: state)
             }
