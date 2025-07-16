@@ -49,6 +49,33 @@ class MovieDetailView: UIView {
         $0.text = "2025.07.16 개봉 | 2시간 35분 | 액션, 애니메이션, 장르명"
     }
     
+    private let metaDetailStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 8
+        $0.alignment = .center
+    }
+    
+    private let languageIconImageView = UIImageView().then {
+        $0.image = UIImage(systemName: "globe")
+        $0.tintColor = .white
+    }
+    
+    private let languageTitleLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 7, weight: .bold)
+        $0.textColor = .systemGray2
+        $0.numberOfLines = 1
+        $0.textAlignment = .left
+        $0.text = "언어"
+    }
+    
+    private let languageValueLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 7, weight: .regular)
+        $0.textColor = .white
+        $0.numberOfLines = 1
+        $0.textAlignment = .left
+        $0.text = "일본어"
+    }
+    
     private let overviewLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 14)
         $0.textColor = .white
@@ -73,10 +100,6 @@ class MovieDetailView: UIView {
             addSubview($0)
         }
         
-        [titleLabel, adultIconImageView, metaInfoLabel, overviewLabel].forEach {
-            blackBackgroundView.addSubview($0)
-        }
-        
         posterImageView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
             $0.height.equalTo(posterImageView.snp.width) // .multipliedBy(0.8)
@@ -91,6 +114,10 @@ class MovieDetailView: UIView {
         blackBackgroundView.snp.makeConstraints {
             $0.top.equalTo(posterImageView.snp.bottom)
             $0.leading.trailing.bottom.equalToSuperview()
+        }
+        
+        [titleLabel, adultIconImageView, metaInfoLabel, metaDetailStackView, overviewLabel].forEach {
+            blackBackgroundView.addSubview($0)
         }
         
         titleLabel.snp.makeConstraints {
@@ -109,12 +136,21 @@ class MovieDetailView: UIView {
             $0.leading.trailing.equalToSuperview().inset(20)
         }
         
+        [].forEach {
+            metaDetailStackView.addArrangedSubview($0)
+        }
+        
+        
+        
+        
         overviewLabel.snp.makeConstraints {
             $0.top.equalTo(metaInfoLabel.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.bottom.lessThanOrEqualToSuperview().offset(-16)
         }
     }
+    
+    
     
     override func layoutSubviews() {
         super.layoutSubviews()
