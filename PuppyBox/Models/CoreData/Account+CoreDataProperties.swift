@@ -6,27 +6,22 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-
-extension Account {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Account> {
+public extension Account {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<Account> {
         return NSFetchRequest<Account>(entityName: "Account")
     }
 
-    @NSManaged public var id: UUID
-    @NSManaged public var password: String
-    @NSManaged public var email: String?
-    @NSManaged public var phone: String?
-    @NSManaged public var profile: String?
-    @NSManaged public var name: String
-    @NSManaged public var userId: String
-    @NSManaged public var isAdmin: Bool
-
+    @NSManaged var id: UUID
+    @NSManaged var password: String
+    @NSManaged var email: String?
+    @NSManaged var phone: String?
+    @NSManaged var profile: String?
+    @NSManaged var name: String
+    @NSManaged var userId: String
+    @NSManaged var isAdmin: Bool
 }
 
-extension Account : Identifiable {
-
-}
+extension Account: Identifiable {}
