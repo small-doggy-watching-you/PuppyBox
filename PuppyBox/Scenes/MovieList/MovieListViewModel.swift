@@ -49,8 +49,4 @@ final class MovieListViewModel: ViewModelProtocol {
             }
         }
     }
-
-    private func updateMovieData(_ data: MovieData) {
-        state.movieData = data
-    }
 }

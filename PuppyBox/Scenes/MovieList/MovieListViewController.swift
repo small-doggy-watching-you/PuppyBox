@@ -6,63 +6,43 @@
 //
 
 import UIKit
-import SwiftUI
+import SnapKit
+import Then
 
-// MARK: - ViewController
 class MovieListViewController: UIViewController {
-    let movieListViewModel = MovieListViewModel()
+    private let logoImageView = UIImageView().then {
+        $0.image = UIImage(named: "PuppyBoxLogo")
+        $0.contentMode = .scaleAspectFit
+    }
+    private let labelImageView = UIImageView().then {
+        $0.image = UIImage(named: "PuppyBoxLabel")
+        $0.contentMode = .scaleAspectFit
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-
         setupHeader()
-
-        movieListViewModel.onDataUpdated = { [weak self] result in
-            guard let self else { return }
-            print(result)
-        }
-
-        movieListViewModel.action(.fetchData)
     }
 
     private func setupHeader() {
-        let labelImageView = UIImageView()
-        labelImageView.image = UIImage(named: "PuppyBoxLabel")
-        labelImageView.contentMode = .scaleAspectFit
         view.addSubview(labelImageView)
-
-        let logoImageView = UIImageView()
-        logoImageView.image = UIImage(named: "PuppyBoxLogo")
-        logoImageView.contentMode = .scaleAspectFit
         view.addSubview(logoImageView)
 
-        labelImageView.translatesAutoresizingMaskIntoConstraints = false
-        logoImageView.translatesAutoresizingMaskIntoConstraints = false
+        labelImageView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(16)
+            make.leading.equalToSuperview().offset(20)
+            make.height.equalTo(32)
+        }
 
-        NSLayoutConstraint.activate([
-            labelImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            labelImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
-            labelImageView.widthAnchor.constraint(equalToConstant: 129),
-            labelImageView.heightAnchor.constraint(equalToConstant: 40),
-
-            logoImageView.leadingAnchor.constraint(equalTo: labelImageView.trailingAnchor, constant: 10),
-            logoImageView.centerYAnchor.constraint(equalTo: labelImageView.centerYAnchor),
-            logoImageView.widthAnchor.constraint(equalToConstant: 40),
-            logoImageView.heightAnchor.constraint(equalToConstant: 40),
-        ])
+        logoImageView.snp.makeConstraints { make in
+            make.centerY.equalTo(labelImageView)
+            make.leading.equalTo(labelImageView.snp.trailing).offset(10)
+            make.width.height.equalTo(40)
+        }
     }
 }
 
-// MARK: - SwiftUI Preview Support
-struct MovieListViewControllerPreview: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> MovieListViewController {
-        return MovieListViewController()
-    }
-
-    func updateUIViewController(_ uiViewController: MovieListViewController, context: Context) {}
-}
-
+@available(iOS 17.0, *)
 #Preview {
-    MovieListViewControllerPreview()
+    MovieListViewController() // 자기가 볼 뷰컨트롤러로
 }
