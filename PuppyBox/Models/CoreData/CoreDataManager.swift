@@ -38,7 +38,7 @@ final class CoreDataManager {
         }
     }
     
-    private func createBasicAccount() {
+     func createBasicAccount() {
         // 관리자 계정 생성
         let admin = Account(context: context)
         admin.id = UUID()
@@ -66,7 +66,7 @@ final class CoreDataManager {
     }
     
     // 모든 데이터 추출함수
-    func fetchAllAcCount() -> [Account] {
+    func fetchAllAccount() -> [Account] {
         let fetchRequest: NSFetchRequest<Account> = Account.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
         return (try? context.fetch(fetchRequest)) ?? []
