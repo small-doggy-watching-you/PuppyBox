@@ -101,6 +101,7 @@ final class LoginViewController: UIViewController {
         view.backgroundColor = .systemBackground
 
         configureUI() // UI 생성
+        DummyService.createBasicAccount() // 더미생성 함수
     }
 
     private func configureUI() {
