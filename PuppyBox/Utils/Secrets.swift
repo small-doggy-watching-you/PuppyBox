@@ -1,6 +1,6 @@
 import Foundation
 
-struct Secrets {
+enum Secrets {
     static var apiKey: String {
         return value(forKey: "API_KEY")
     }
