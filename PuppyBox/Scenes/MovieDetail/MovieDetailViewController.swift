@@ -10,7 +10,6 @@
 // detailVC.viewModel.action(.configure(selectedMovie))
 // navigationController?.pushViewController(detailVC, animated: true)
 
-import SwiftUI // 프리뷰용
 import UIKit
 
 class MovieDetailViewController: UIViewController {
@@ -24,7 +23,14 @@ class MovieDetailViewController: UIViewController {
     }
     
     private func setupView() {
-        view.backgroundColor = .black
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .clear
+        appearance.backgroundEffect = nil
+        
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        
         view.addSubview(movieDetailView)
         movieDetailView.frame = view.bounds
     }
@@ -48,18 +54,9 @@ class MovieDetailViewController: UIViewController {
     }
 }
 
-// SwiftUI Preview용 래퍼
-struct MovieDetailViewControllerPreview: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> some UIViewController {
-        return MovieDetailViewController()
-    }
-
-    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
-        // 필요시 업데이트
-    }
-}
 
 // #Preview로 보기
+@available(iOS 17.0, *)
 #Preview {
-    MovieDetailViewControllerPreview()
+    MovieDetailViewController()
 }
