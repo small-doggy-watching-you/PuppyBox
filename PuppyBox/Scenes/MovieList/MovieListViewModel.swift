@@ -1,15 +1,29 @@
+//
+//  MovieListViewModel.swift
+//  PuppyBox
+//
+//  Created by 노가현 on 7/16/25.
+//
 
 import Foundation
 
 final class MovieListViewModel: ViewModelProtocol {
     struct State {
-        var movieData: MovieData?
+        var movieData: MovieData? = nil
     }
 
     private(set) var state: State {
-        didSet {
-            onDataUpdated?(state)
-        }
+        didSet { onDataUpdated?(state) }
+    }
+
+    private let dataService = DataService()
+    var onDataUpdated: ((State) -> Void)?
+    var pageNum = 1
+
+    init() {
+        state = State(
+            // movieData: nil,
+        )
     }
 
     enum Action {
@@ -23,25 +37,20 @@ final class MovieListViewModel: ViewModelProtocol {
         }
     }
 
-    private let dataService = DataService()
-    var onDataUpdated: ((State) -> Void)?
-    var pageNum = 1
-
-    init() {
-        state = State(
-            //            movieData: nil,
-        )
-    }
-
     private func fetchData() {
         dataService.fetchData(pageNum: pageNum) { [weak self] result in
             guard let self else { return }
+
             switch result {
-            case let .success(moviedata):
+            case .success(let moviedata):
                 self.state.movieData = moviedata
-            case let .failure(error):
+            case .failure(let error):
                 print("Error: \(error)")
             }
         }
+    }
+
+    private func updateMovieData(_ data: MovieData) {
+        state.movieData = data
     }
 }
