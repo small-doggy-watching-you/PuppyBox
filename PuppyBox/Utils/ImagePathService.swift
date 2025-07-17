@@ -5,7 +5,7 @@ enum ImagePathService {
     /*
       size는 Models/ImageSize 사용
       호출 예제
-       ImagePathService.makeImagePath(size: ImageSize.w500.rawValue, posterPath: path)
+       ImagePathService.makeImagePath(size: ImageSize.w500, posterPath: path)
      */
 
     static func makeImagePath(size: String, posterPath: String) -> String {
