@@ -55,27 +55,6 @@ class MovieDetailView: UIView {
         $0.alignment = .center
     }
     
-    private let languageIconImageView = UIImageView().then {
-        $0.image = UIImage(systemName: "globe")
-        $0.tintColor = .white
-    }
-    
-    private let languageTitleLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 7, weight: .bold)
-        $0.textColor = .systemGray2
-        $0.numberOfLines = 1
-        $0.textAlignment = .left
-        $0.text = "언어"
-    }
-    
-    private let languageValueLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 7, weight: .regular)
-        $0.textColor = .white
-        $0.numberOfLines = 1
-        $0.textAlignment = .left
-        $0.text = "일본어"
-    }
-    
     private let overviewLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 14)
         $0.textColor = .white
@@ -136,21 +115,62 @@ class MovieDetailView: UIView {
             $0.leading.trailing.equalToSuperview().inset(20)
         }
         
-        [].forEach {
-            metaDetailStackView.addArrangedSubview($0)
+        [
+            setupMetaDetailContent(symbol: "globe", title: "언어", value: "일본어"),
+            setupMetaDetailContent(symbol: "star.leadinghalf.filled", title: "평점", value: "7.314")
+        ].forEach { metaDetailStackView.addArrangedSubview($0) }
+        
+        metaDetailStackView.snp.makeConstraints {
+            $0.top.equalTo(metaInfoLabel.snp.bottom).offset(16)
+            $0.leading.trailing.equalToSuperview().inset(20)
         }
         
-        
-        
-        
         overviewLabel.snp.makeConstraints {
-            $0.top.equalTo(metaInfoLabel.snp.bottom).offset(16)
+            $0.top.equalTo(metaDetailStackView.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.bottom.lessThanOrEqualToSuperview().offset(-16)
         }
     }
     
-    
+    private func setupMetaDetailContent(symbol: String, title: String, value: String) -> UIStackView {
+        let hStackView = UIStackView().then {
+            $0.axis = .horizontal
+            $0.spacing = 4
+            $0.alignment = .leading
+        }
+        
+        let iconImageView = UIImageView().then {
+            $0.image = UIImage(systemName: symbol)
+            $0.tintColor = .white
+        }
+        
+        let vStackView = UIStackView().then {
+            $0.axis = .vertical
+            $0.spacing = 2
+            $0.alignment = .leading
+        }
+        
+        let titleLabel = UILabel().then {
+            $0.font = .systemFont(ofSize: 7, weight: .bold)
+            $0.textColor = .systemGray2
+            $0.numberOfLines = 1
+            $0.textAlignment = .left
+            $0.text = title
+        }
+        
+        let valueLabel = UILabel().then {
+            $0.font = .systemFont(ofSize: 7, weight: .regular)
+            $0.textColor = .white
+            $0.numberOfLines = 1
+            $0.textAlignment = .left
+            $0.text = value
+        }
+        
+        [titleLabel, valueLabel].forEach { vStackView.addArrangedSubview($0) }
+        [iconImageView, vStackView].forEach { hStackView.addArrangedSubview($0) }
+        
+        return hStackView
+    }
     
     override func layoutSubviews() {
         super.layoutSubviews()
