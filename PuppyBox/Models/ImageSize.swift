@@ -7,4 +7,8 @@ enum ImageSize: String {
     case w500
     case w780
     case original
+    
+    var description: String {
+        return rawValue
+    }
 }
