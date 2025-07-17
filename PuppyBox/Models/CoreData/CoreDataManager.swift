@@ -93,17 +93,18 @@ final class CoreDataManager {
         UserDefaults.standard.removeObject(forKey: "isBasicAccountExist")
         print(" UserDefaults 상태 초기화 완료")
     }
-    
+
     // 비밀번호 획득 함수
     func loginVerification(userId: String, password: String) -> Bool {
         let fetchRequest: NSFetchRequest<Account> = Account.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
-        fetchRequest.fetchLimit = 1
-        
-        guard let account = (try? context.fetch(fetchRequest))?.first else {
+        fetchRequest.predicate = NSPredicate(format: "userId == %@", userId) // 유저 id와 일치하는 데이터 검색
+        fetchRequest.fetchLimit = 1 // 1건만 (성능향상)
+
+        guard let account = (try? context.fetch(fetchRequest))?.first else { // 일치하는 데이터가 없을 경우 false
             return false
         }
-        
+
+        // 입력한 패스워드와 일치하면 true 다를경우 false
         return account.password == password ? true : false
     }
 }
