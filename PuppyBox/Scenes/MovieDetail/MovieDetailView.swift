@@ -13,18 +13,26 @@ import UIKit
 // 백그라운드 뷰 안을 영화 정보 뷰(MovieInfoView), 그 밑에 예매 뷰(추가예정)로 구성
 
 class MovieDetailView: UIView {
+    var onPosterTapped: (() -> Void)?
+    var posterImage: UIImage? {
+        return posterImageView.image
+    }
     private let movieInfoView = MovieInfoView()
+    
+    private let topGradientMaskView = UIView().then { // 이미지 상단 (최상단) 그라데이션
+        $0.backgroundColor = .clear
+        $0.isUserInteractionEnabled = false
+    }
+    
+    private let gradientMaskView = UIView().then { // 이미지 하단 (글자영역 상단) 그라데이션
+        $0.backgroundColor = .clear
+        $0.isUserInteractionEnabled = false
+    }
     
     private let posterImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .systemGray5
         $0.clipsToBounds = true
-//        $0.image = UIImage(named: "1585204391")
-    }
-    
-    private let gradientMaskView = UIView().then {
-        $0.backgroundColor = .clear
-        $0.isUserInteractionEnabled = false
     }
     
     private let blackBackgroundView = UIView().then { // 글씨 영역용
@@ -35,8 +43,9 @@ class MovieDetailView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureUI()
+        setupGesture()
     }
-
+    
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -45,7 +54,14 @@ class MovieDetailView: UIView {
     private func configureUI() {
         backgroundColor = .black
         
-        [posterImageView, gradientMaskView, blackBackgroundView].forEach { addSubview($0) }
+        [posterImageView, topGradientMaskView, gradientMaskView, blackBackgroundView].forEach {
+            addSubview($0)
+        }
+        
+        topGradientMaskView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+            $0.height.equalTo(120)
+        }
         
         posterImageView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
@@ -64,6 +80,7 @@ class MovieDetailView: UIView {
         }
         
         blackBackgroundView.addSubview(movieInfoView)
+        
         movieInfoView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
@@ -73,9 +90,38 @@ class MovieDetailView: UIView {
         movieInfoView.configure(with: movie)
     }
     
+    func setPosterImage(_ image: UIImage?) {
+        posterImageView.image = image
+    }
+    
+    private func setupGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapPoster))
+        posterImageView.isUserInteractionEnabled = true
+        posterImageView.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc
+    private func didTapPoster() {
+        onPosterTapped?()
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         applyGradient()
+        applyTopGradient()
+    }
+    
+    private func applyTopGradient() {
+        topGradientMaskView.layer.sublayers?.removeAll(where: { $0 is CAGradientLayer })
+        
+        let gradient = CAGradientLayer()
+        gradient.colors = [
+            UIColor.black.withAlphaComponent(0.4).cgColor, // 위쪽은 살짝 어둡게
+            UIColor.clear.cgColor // 아래로 갈수록 투명
+        ]
+        gradient.locations = [0.0, 1.0]
+        gradient.frame = topGradientMaskView.bounds
+        topGradientMaskView.layer.insertSublayer(gradient, at: 0)
     }
     
     private func applyGradient() {

@@ -12,13 +12,8 @@ final class MovieDetailViewModel: ViewModelProtocol {
         didSet { onStateChanged?(state) }
     }
 
-    // 상태 변화 알림
     var onStateChanged: ((State) -> Void)? {
-        didSet {
-            if let onStateChanged = onStateChanged {
-                onStateChanged(state)
-            }
-        }
+        didSet { onStateChanged?(state) }
     }
 
     init(movie: MovieResults) {

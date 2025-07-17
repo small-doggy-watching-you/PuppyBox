@@ -154,7 +154,10 @@ class MovieInfoView: UIView {
         titleLabel.text = movie.title
         overviewLabel.text = movie.overview
         adultIconImageView.isHidden = !movie.adult
-        metaInfoLabel.text = "\(movie.releaseDate) 개봉 | 액션, 애니메이션, 장르명" // genreId 찾아 수정하기
+        
+        let genreNames = movie.genreIds.compactMap { genreMap[$0]}
+        let genreText = genreNames.joined(separator: ", ")
+        metaInfoLabel.text = "\(movie.releaseDate) 개봉 | \(genreText)"
         
         for arrangedSubview in metaDetailStackView.arrangedSubviews {
             metaDetailStackView.removeArrangedSubview(arrangedSubview)
