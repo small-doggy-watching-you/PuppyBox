@@ -9,8 +9,11 @@ import SnapKit
 import Then
 import UIKit
 
+// 위에서부터 포스터이미지, 이미지 위에 겹치는 그라데이션, 그 밑에 검정 백그라운드 뷰
+// 백그라운드 뷰 안을 영화 정보 뷰, 그 밑에 예매 뷰로 구성
+
 class MovieDetailView: UIView {
-    private let movieDetailInfoView = MovieDetailInfoView()
+    private let movieInfoView = MovieInfoView()
     
     private let posterImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
@@ -24,8 +27,7 @@ class MovieDetailView: UIView {
         $0.isUserInteractionEnabled = false
     }
     
-    // 글씨 영역용: 항상 검정
-    private let blackBackgroundView = UIView().then {
+    private let blackBackgroundView = UIView().then { // 글씨 영역용: 항상 검정
         $0.backgroundColor = .black
         $0.clipsToBounds = true
     }
@@ -63,8 +65,8 @@ class MovieDetailView: UIView {
             $0.leading.trailing.bottom.equalToSuperview()
         }
         
-        blackBackgroundView.addSubview(movieDetailInfoView)
-        movieDetailInfoView.snp.makeConstraints {
+        blackBackgroundView.addSubview(movieInfoView)
+        movieInfoView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }

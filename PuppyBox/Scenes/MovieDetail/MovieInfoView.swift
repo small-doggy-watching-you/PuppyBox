@@ -1,5 +1,5 @@
 //
-//  MovieDetailInfoView.swift
+//  MovieInfoView.swift
 //  PuppyBox
 //
 //  Created by 김우성 on 7/17/25.
@@ -9,7 +9,7 @@ import SnapKit
 import Then
 import UIKit
 
-class MovieDetailInfoView: UIView {
+class MovieInfoView: UIView {
     private let titleLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 24, weight: .heavy)
         $0.textColor = .white
@@ -70,8 +70,8 @@ class MovieDetailInfoView: UIView {
     }
     
     private func configureUI() {
-        for item in [titleLabel, adultIconImageView, metaInfoLabel, metaDetailStackView, separatorView, overviewTitleLabel, overviewLabel] {
-            addSubview(item)
+        [titleLabel, adultIconImageView, metaInfoLabel, metaDetailStackView, separatorView, overviewTitleLabel, overviewLabel].forEach {
+            addSubview($0)
         }
         
         titleLabel.snp.makeConstraints {
