@@ -19,18 +19,17 @@ class MovieDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        
     }
-    
+
     private func setupView() {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithTransparentBackground()
         appearance.backgroundColor = .clear
         appearance.backgroundEffect = nil
-        
+
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
-        
+
         view.addSubview(movieDetailView)
         movieDetailView.frame = view.bounds
     }
@@ -53,7 +52,6 @@ class MovieDetailViewController: UIViewController {
          */
     }
 }
-
 
 // #Preview로 보기
 @available(iOS 17.0, *)

@@ -8,7 +8,6 @@
 import Foundation
 
 final class MovieDetailViewModel: ViewModelProtocol {
-    
     struct State {
         var movie: MovieResults? = nil
         var selectedDate: Date? = nil
@@ -52,7 +51,6 @@ final class MovieDetailViewModel: ViewModelProtocol {
         }
     }
 }
-
 
 /*
  {
