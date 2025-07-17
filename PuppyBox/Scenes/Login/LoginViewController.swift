@@ -9,7 +9,8 @@ final class LoginViewController: UIViewController {
 
     private let logoOriginSize: CGFloat = 131 / 512 // 비율용 로고 원본 사이즈
     private let logoWidth: CGFloat = 150 // 로고 너비 설정상수
-  
+    let defaults = UserDefaults.standard // 유저 디폴트
+
     // MARK: - UI Components
 
     // 로고 이미지
@@ -36,6 +37,9 @@ final class LoginViewController: UIViewController {
     private let idTextField = UITextField().then {
         $0.borderStyle = .roundedRect
         $0.placeholder = "아이디를 입력해주세요."
+        $0.autocapitalizationType = .none // 자동 대문자 변환 무시
+        $0.autocorrectionType = .no // 자동 수정 무시
+        $0.smartQuotesType = .no // 스마트 구두점 무시
     }
 
     // 비밀번호 글자 라벨
@@ -50,6 +54,9 @@ final class LoginViewController: UIViewController {
         $0.borderStyle = .roundedRect
         $0.isSecureTextEntry = true
         $0.placeholder = "비밀번호를 입력해주세요."
+        $0.autocapitalizationType = .none
+        $0.autocorrectionType = .no
+        $0.smartQuotesType = .no
     }
 
     // 비밀번호 잘못 입력시 출력할 라벨
@@ -103,16 +110,22 @@ final class LoginViewController: UIViewController {
 
         configureUI() // UI 생성
         DummyService.createBasicAccount() // 더미생성 함수
-        
+
+        // 로그인 버튼액션
         loginButton.addAction(UIAction { [weak self] _ in
-           guard let self,
-                 let userId = self.idTextField.text,
-                 let password = self.passwordTextField.text
+            guard let self,
+                  let userId = self.idTextField.text,
+                  let password = self.passwordTextField.text
             else { return }
             self.handleLogin(userId: userId, password: password)
         }, for: .touchUpInside)
-        
+    }
 
+    override func viewDidAppear(_: Bool) {
+        if UserSetting.isLogined { // 로그인한적이 있다면
+            idTextField.text = UserSetting.userId
+            passwordTextField.text = UserSetting.password
+        }
     }
 
     private func configureUI() {
@@ -190,12 +203,26 @@ final class LoginViewController: UIViewController {
             $0.height.equalTo(50)
         }
     }
-    
-    
+
+    // 로그인 제어
     func handleLogin(userId: String, password: String) {
-        print("userId : \(userId), password: \(password)")
-        wrongPasswordLabel.isHidden.toggle()
-        
+        // 패스워드가 만는지 파별
+        let isLoginSuccess = CoreDataManager.shared.loginVerification(userId: userId, password: password)
+
+        if isLoginSuccess { // 로그인 한 적이 있으면
+            // 유저 디폴트 값 저장
+            UserSetting.isLogined = true
+            UserSetting.userId = userId
+            UserSetting.password = password
+
+            // 페이지 이동
+            let movieListVC = MovieListViewController()
+            movieListVC.modalPresentationStyle = .fullScreen
+            present(movieListVC, animated: true)
+
+        } else {
+            // "비밀번호를 잘못 입력했습니다"의 히든 해제
+            wrongPasswordLabel.isHidden = false
+        }
     }
-    
 }

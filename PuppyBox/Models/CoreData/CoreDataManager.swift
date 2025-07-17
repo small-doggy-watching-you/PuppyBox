@@ -90,7 +90,7 @@ final class CoreDataManager {
         }
 
         // UserDefaults 키 초기화
-        UserDefaults.standard.removeObject(forKey: "isBasicAccountExist")
+        UserSetting.isBasicAccountExist = false
         print(" UserDefaults 상태 초기화 완료")
     }
 
