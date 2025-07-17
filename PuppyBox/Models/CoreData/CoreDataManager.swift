@@ -90,7 +90,9 @@ final class CoreDataManager {
         }
 
         // UserDefaults 키 초기화
-        UserSetting.isBasicAccountExist = false
+        @UserSetting(key: UDKey.isBasicAccountExist, defaultValue: false)
+        var isBasicAccountExist
+        isBasicAccountExist = false
         print(" UserDefaults 상태 초기화 완료")
     }
 

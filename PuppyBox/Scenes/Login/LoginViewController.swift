@@ -11,6 +11,15 @@ final class LoginViewController: UIViewController {
     private let logoWidth: CGFloat = 150 // 로고 너비 설정상수
     let defaults = UserDefaults.standard // 유저 디폴트
 
+    @UserSetting(key: UDKey.userId, defaultValue: "")
+    var userId: String
+
+    @UserSetting(key: UDKey.password, defaultValue: "")
+    var password: String
+
+    @UserSetting(key: UDKey.isLogined, defaultValue: false)
+    var isLogined: Bool
+
     // MARK: - UI Components
 
     // 로고 이미지
@@ -127,9 +136,9 @@ final class LoginViewController: UIViewController {
     }
 
     override func viewDidAppear(_: Bool) {
-        if UserSetting.isLogined { // 로그인한적이 있다면
-            idTextField.text = UserSetting.userId
-            passwordTextField.text = UserSetting.password
+        if isLogined { // 로그인한적이 있다면
+            idTextField.text = userId
+            passwordTextField.text = password
         }
     }
 
@@ -216,9 +225,9 @@ final class LoginViewController: UIViewController {
 
         if isLoginSuccess { // 로그인 한 적이 있으면
             // 유저 디폴트 값 저장
-            UserSetting.isLogined = true
-            UserSetting.userId = userId
-            UserSetting.password = password
+            isLogined = true
+            self.userId = userId
+            self.password = password
 
             // 페이지 이동
             let movieListVC = MovieListViewController()
