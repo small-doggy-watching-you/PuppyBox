@@ -11,6 +11,15 @@ final class LoginViewController: UIViewController {
     private let logoWidth: CGFloat = 150 // 로고 너비 설정상수
     let defaults = UserDefaults.standard // 유저 디폴트
 
+    @UserSetting(key: UDKey.userId, defaultValue: "")
+    var userId: String
+
+    @UserSetting(key: UDKey.password, defaultValue: "")
+    var password: String
+
+    @UserSetting(key: UDKey.isLogined, defaultValue: false)
+    var isLogined: Bool
+
     // MARK: - UI Components
 
     // 로고 이미지
@@ -82,10 +91,11 @@ final class LoginViewController: UIViewController {
     }
 
     // 회원가입 글자 우측
-    private let joinLabel = UILabel().then {
+    private let signUpLabel = UILabel().then {
         $0.text = "회원가입"
         $0.font = .systemFont(ofSize: 12, weight: .bold)
         $0.textColor = .secondaryLabel
+        $0.isUserInteractionEnabled = true // 터치이벤트 받기 위한 속성
     }
 
     // 로그인 버튼
@@ -119,12 +129,16 @@ final class LoginViewController: UIViewController {
             else { return }
             self.handleLogin(userId: userId, password: password)
         }, for: .touchUpInside)
+
+        // 회원가입 라벨에 액션주입
+        let tapSignUp = UITapGestureRecognizer(target: self, action: #selector(didTapSignUpLabel))
+        signUpLabel.addGestureRecognizer(tapSignUp)
     }
 
     override func viewDidAppear(_: Bool) {
-        if UserSetting.isLogined { // 로그인한적이 있다면
-            idTextField.text = UserSetting.userId
-            passwordTextField.text = UserSetting.password
+        if isLogined { // 로그인한적이 있다면
+            idTextField.text = userId
+            passwordTextField.text = password
         }
     }
 
@@ -148,7 +162,7 @@ final class LoginViewController: UIViewController {
 
         joinStackView.addArrangedSubview(alreadyAccountLabel)
         joinStackView.addArrangedSubview(deviderLabel)
-        joinStackView.addArrangedSubview(joinLabel)
+        joinStackView.addArrangedSubview(signUpLabel)
 
         // 오토 레이아웃 적용
         logoImage.snp.makeConstraints {
@@ -211,9 +225,9 @@ final class LoginViewController: UIViewController {
 
         if isLoginSuccess { // 로그인 한 적이 있으면
             // 유저 디폴트 값 저장
-            UserSetting.isLogined = true
-            UserSetting.userId = userId
-            UserSetting.password = password
+            isLogined = true
+            self.userId = userId
+            self.password = password
 
             // 페이지 이동
             let movieListVC = MovieListViewController()
@@ -224,5 +238,12 @@ final class LoginViewController: UIViewController {
             // "비밀번호를 잘못 입력했습니다"의 히든 해제
             wrongPasswordLabel.isHidden = false
         }
+    }
+
+    // 회원가입 라벨 탭할 경우 화면 이동
+    @objc
+    private func didTapSignUpLabel() {
+        let signUpVC = SignUpViewController()
+        navigationController?.pushViewController(signUpVC, animated: true)
     }
 }
