@@ -9,7 +9,7 @@ final class LoginViewController: UIViewController {
 
     private let logoOriginSize: CGFloat = 131 / 512 // 비율용 로고 원본 사이즈
     private let logoWidth: CGFloat = 150 // 로고 너비 설정상수
-
+  
     // MARK: - UI Components
 
     // 로고 이미지
@@ -46,7 +46,7 @@ final class LoginViewController: UIViewController {
     }
 
     // 비밀번호 입력 란
-    private let passwordLabelTextField = UITextField().then {
+    private let passwordTextField = UITextField().then {
         $0.borderStyle = .roundedRect
         $0.isSecureTextEntry = true
         $0.placeholder = "비밀번호를 입력해주세요."
@@ -57,6 +57,7 @@ final class LoginViewController: UIViewController {
         $0.text = "비밀번호를 잘못 입력했습니다."
         $0.font = .systemFont(ofSize: 12, weight: .regular)
         $0.textColor = .red
+        $0.isHidden = true
     }
 
     // 회원가입 글자 좌측
@@ -102,6 +103,16 @@ final class LoginViewController: UIViewController {
 
         configureUI() // UI 생성
         DummyService.createBasicAccount() // 더미생성 함수
+        
+        loginButton.addAction(UIAction { [weak self] _ in
+           guard let self,
+                 let userId = self.idTextField.text,
+                 let password = self.passwordTextField.text
+            else { return }
+            self.handleLogin(userId: userId, password: password)
+        }, for: .touchUpInside)
+        
+
     }
 
     private func configureUI() {
@@ -112,7 +123,7 @@ final class LoginViewController: UIViewController {
             idLabel,
             idTextField,
             passwordLabel,
-            passwordLabelTextField,
+            passwordTextField,
             wrongPasswordLabel,
             joinStackView,
             loginButton,
@@ -156,7 +167,7 @@ final class LoginViewController: UIViewController {
             $0.leading.equalTo(idLabel)
         }
 
-        passwordLabelTextField.snp.makeConstraints {
+        passwordTextField.snp.makeConstraints {
             $0.top.equalTo(passwordLabel.snp.bottom).offset(10)
             $0.leading.equalTo(idLabel)
             $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
@@ -164,12 +175,12 @@ final class LoginViewController: UIViewController {
         }
 
         wrongPasswordLabel.snp.makeConstraints {
-            $0.top.equalTo(passwordLabelTextField.snp.bottom).offset(5)
+            $0.top.equalTo(passwordTextField.snp.bottom).offset(5)
             $0.left.equalTo(idLabel)
         }
 
         joinStackView.snp.makeConstraints {
-            $0.top.equalTo(passwordLabelTextField.snp.bottom).offset(50)
+            $0.top.equalTo(passwordTextField.snp.bottom).offset(50)
             $0.centerX.equalToSuperview()
         }
 
@@ -179,4 +190,12 @@ final class LoginViewController: UIViewController {
             $0.height.equalTo(50)
         }
     }
+    
+    
+    func handleLogin(userId: String, password: String) {
+        print("userId : \(userId), password: \(password)")
+        wrongPasswordLabel.isHidden.toggle()
+        
+    }
+    
 }
