@@ -78,6 +78,7 @@ class MovieListViewController: UIViewController {
         collectionView.snp.makeConstraints {
             $0.top.equalTo(labelImageView.snp.bottom).offset(16)
             $0.leading.trailing.bottom.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(8)
         }
     }
 
