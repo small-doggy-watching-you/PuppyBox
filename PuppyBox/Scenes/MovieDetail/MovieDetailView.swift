@@ -10,7 +10,7 @@ import Then
 import UIKit
 
 // 위에서부터 포스터이미지, 이미지 위에 겹치는 그라데이션, 그 밑에 검정 백그라운드 뷰
-// 백그라운드 뷰 안을 영화 정보 뷰, 그 밑에 예매 뷰로 구성
+// 백그라운드 뷰 안을 영화 정보 뷰(MovieInfoView), 그 밑에 예매 뷰(추가예정)로 구성
 
 class MovieDetailView: UIView {
     private let movieInfoView = MovieInfoView()
@@ -19,7 +19,7 @@ class MovieDetailView: UIView {
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .systemGray5
         $0.clipsToBounds = true
-        $0.image = UIImage(named: "1585204391")
+//        $0.image = UIImage(named: "1585204391")
     }
     
     private let gradientMaskView = UIView().then {
@@ -27,7 +27,7 @@ class MovieDetailView: UIView {
         $0.isUserInteractionEnabled = false
     }
     
-    private let blackBackgroundView = UIView().then { // 글씨 영역용: 항상 검정
+    private let blackBackgroundView = UIView().then { // 글씨 영역용
         $0.backgroundColor = .black
         $0.clipsToBounds = true
     }
@@ -45,13 +45,11 @@ class MovieDetailView: UIView {
     private func configureUI() {
         backgroundColor = .black
         
-        for item in [posterImageView, gradientMaskView, blackBackgroundView] {
-            addSubview(item)
-        }
+        [posterImageView, gradientMaskView, blackBackgroundView].forEach { addSubview($0) }
         
         posterImageView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(posterImageView.snp.width) // .multipliedBy(0.8)
+            $0.height.equalTo(posterImageView.snp.width)
         }
         
         gradientMaskView.snp.makeConstraints {
@@ -69,6 +67,10 @@ class MovieDetailView: UIView {
         movieInfoView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+    }
+    
+    func configure(with movie: MovieResults) {
+        movieInfoView.configure(with: movie)
     }
     
     override func layoutSubviews() {
