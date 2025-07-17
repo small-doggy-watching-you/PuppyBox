@@ -2,11 +2,11 @@ import Alamofire
 import Foundation
 
 final class DataService {
-    private let upcomingURL = "https://api.themoviedb.org/3/movie/upcoming"
-    func fetchData(pageNum: Int, completion: @escaping (Result<MovieData, Error>) -> Void) {
+    func fetchData(endpoint: String, pageNum: Int = 1, completion: @escaping (Result<MovieData, Error>) -> Void) {
+        let url = "https://api.themoviedb.org/3/movie/\(endpoint)"
         let parameters: Parameters = [
             "language": "ko-kr",
-            "page": pageNum,
+            "page": pageNum
         ]
 
         let headers: HTTPHeaders = [
@@ -14,7 +14,7 @@ final class DataService {
             "Authorization": Secrets.accessToken,
         ]
 
-        AF.request(upcomingURL, method: .get, parameters: parameters, headers: headers)
+        AF.request(url, method: .get, parameters: parameters, headers: headers)
             .responseDecodable(of: MovieData.self) { response in
                 switch response.result {
                 case let .success(data):

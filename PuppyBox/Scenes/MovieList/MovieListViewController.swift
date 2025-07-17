@@ -5,11 +5,16 @@
 //  Created by 김우성 on 7/15/25.
 //
 
+import Kingfisher
 import SnapKit
 import Then
 import UIKit
 
 class MovieListViewController: UIViewController {
+    private let viewModel = MovieListViewModel()
+
+    private let sectionTitles = ["무비차트", "현재 상영작", "상영 예정작"]
+
     private let labelImageView = UIImageView().then {
         $0.image = UIImage(named: "PuppyBoxLabel")
         $0.contentMode = .scaleAspectFit
@@ -22,19 +27,18 @@ class MovieListViewController: UIViewController {
 
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
 
-    private let sectionTitles = ["무비차트", "현재 상영작", "상영 예정작"]
-
-    private let dummyData = [
-        (0..<10).map { "무비차트 영화\($0)" },
-        (0..<5).map { "현재상영 영화\($0)" },
-        (0..<8).map { "상영예정 영화\($0)" }
-    ]
-
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupHeader()
         setupCollectionView()
+
+        viewModel.onDataUpdated = { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.collectionView.reloadData()
+            }
+        }
+        viewModel.fetchAllData()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -127,13 +131,24 @@ extension MovieListViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        dummyData[section].count
+        switch section {
+        case 0: return viewModel.state.movieChart.count
+        case 1: return viewModel.state.nowPlaying.count
+        case 2: return viewModel.state.upcoming.count
+        default: return 0
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MoviePosterCell.identifier, for: indexPath) as! MoviePosterCell
-        let movieTitle = dummyData[indexPath.section][indexPath.item]
-        cell.setTitle(movieTitle)
+        let movie: MovieResults?
+        switch indexPath.section {
+        case 0: movie = viewModel.state.movieChart[indexPath.item]
+        case 1: movie = viewModel.state.nowPlaying[indexPath.item]
+        case 2: movie = viewModel.state.upcoming[indexPath.item]
+        default: movie = nil
+        }
+        cell.setImage(with: movie?.posterPath)
         return cell
     }
 

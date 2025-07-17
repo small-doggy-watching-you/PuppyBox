@@ -6,31 +6,31 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class MoviePosterCell: UICollectionViewCell {
     static let identifier = "MoviePosterCell"
 
-    private let titleLabel = UILabel().then {
-        $0.textColor = .black
-        $0.font = .systemFont(ofSize: 14)
-        $0.textAlignment = .center
-        $0.numberOfLines = 2
-        $0.backgroundColor = .systemGray5
+    private let imageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFill
+        $0.clipsToBounds = true
         $0.layer.cornerRadius = 8
-        $0.layer.masksToBounds = true
+        $0.backgroundColor = .systemGray5
     }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.addSubview(titleLabel)
-        titleLabel.snp.makeConstraints { $0.edges.equalToSuperview() }
+        contentView.addSubview(imageView)
+        imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setTitle(_ text: String) {
-        titleLabel.text = text
+    func setImage(with path: String?) {
+        guard let path = path else { return }
+        let url = URL(string: "https://image.tmdb.org/t/p/original\(path)")
+        imageView.kf.setImage(with: url)
     }
 }
