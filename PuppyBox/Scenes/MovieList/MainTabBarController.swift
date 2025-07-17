@@ -16,7 +16,6 @@ class MainTabBarController: UITabBarController {
 
     private func setupViewControllers() {
         let homeVC = MovieListViewController()
-        homeVC.title = "홈"
         let homeNav = UINavigationController(rootViewController: homeVC)
         homeNav.tabBarItem = UITabBarItem(
             title: "홈",
@@ -31,20 +30,20 @@ class MainTabBarController: UITabBarController {
         searchNav.tabBarItem = UITabBarItem(
             title: "검색",
             image: UIImage(systemName: "magnifyingglass"),
-            // selectedImage: UIImage(systemName: "magnifyingglass.fill")
-            selectedImage: nil
+            selectedImage: UIImage(systemName: "magnifyingglass.fill")
         )
-        // searchNav.isNavigationBarHidden = true
-//
-//        let myPageVC = MyPageViewController()
-//        myPageVC.title = "마이페이지"
-//        let myPageNav = UINavigationController(rootViewController: myPageVC)
-//        myPageNav.tabBarItem = UITabBarItem(
-//            title: "마이페이지",
-//            image: UIImage(systemName: "person"),
-//            selectedImage: UIImage(systemName: "person.fill")
-//        )
+        searchNav.isNavigationBarHidden = true
 
-        viewControllers = [homeNav, searchNav /*, myPageNav */]
+        let myPageVC = MyPageViewController()
+        myPageVC.title = "마이페이지"
+        let myPageNav = UINavigationController(rootViewController: myPageVC)
+        myPageNav.tabBarItem = UITabBarItem(
+            title: "마이페이지",
+            image: UIImage(systemName: "person"),
+            selectedImage: UIImage(systemName: "person.fill")
+        )
+        myPageNav.isNavigationBarHidden = true
+
+        viewControllers = [homeNav, searchNav, myPageNav]
     }
 }

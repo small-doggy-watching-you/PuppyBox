@@ -7,5 +7,4 @@
 
 import UIKit
 
-class MyPageViewController: UIViewController {
-}
+class MyPageViewController: UIViewController {}

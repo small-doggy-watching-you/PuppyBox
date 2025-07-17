@@ -10,7 +10,6 @@ import Then
 import UIKit
 
 class MovieListViewController: UIViewController {
-
     private let labelImageView = UIImageView().then {
         $0.image = UIImage(named: "PuppyBoxLabel")
         $0.contentMode = .scaleAspectFit
