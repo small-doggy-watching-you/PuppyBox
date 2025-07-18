@@ -16,7 +16,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         let navi = UINavigationController()
         navi.setViewControllers([MovieListViewController()], animated: false)
-//        navi.setViewControllers([LoginViewController()], animated: false)
 
         window.rootViewController = navi
         window.makeKeyAndVisible()
