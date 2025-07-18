@@ -39,7 +39,7 @@ final class LoginViewController: UIViewController {
     // 아이디 글자 라벨
     private let idLabel = UILabel().then {
         $0.text = "아이디"
-        $0.font = .systemFont(ofSize: 17, weight: .regular)
+        $0.font = .systemFont(ofSize: 16, weight: .regular)
         $0.textColor = .label
     }
 
@@ -56,7 +56,7 @@ final class LoginViewController: UIViewController {
     // 비밀번호 글자 라벨
     private let passwordLabel = UILabel().then {
         $0.text = "비밀번호"
-        $0.font = .systemFont(ofSize: 17, weight: .regular)
+        $0.font = .systemFont(ofSize: 16, weight: .regular)
         $0.textColor = .label
     }
 
@@ -89,14 +89,14 @@ final class LoginViewController: UIViewController {
     // 회원가입 글자 |
     private let deviderLabel = UILabel().then {
         $0.text = "|"
-        $0.font = .systemFont(ofSize: 12, weight: .bold)
+        $0.font = .systemFont(ofSize: 11, weight: .bold)
         $0.textColor = .secondaryLabel
     }
 
     // 회원가입 글자 우측
     private let signUpLabel = UILabel().then {
         $0.text = "회원가입"
-        $0.font = .systemFont(ofSize: 12, weight: .bold)
+        $0.font = .systemFont(ofSize: 11, weight: .bold)
         $0.textColor = .secondaryLabel
         $0.isUserInteractionEnabled = true // 터치이벤트 받기 위한 속성
     }
@@ -105,7 +105,7 @@ final class LoginViewController: UIViewController {
     private let loginButton = UIButton().then {
         $0.setTitle("로그인", for: .normal)
         $0.setTitleColor(.systemBackground, for: .normal)
-        $0.layer.cornerRadius = 10
+        $0.layer.cornerRadius = 6
         $0.backgroundColor = .appPrimary
     }
 
@@ -143,7 +143,10 @@ final class LoginViewController: UIViewController {
         signUpLabel.addGestureRecognizer(tapSignUp)
 
         let tapDismissKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapDismissKeyboard.cancelsTouchesInView = false
         view.addGestureRecognizer(tapDismissKeyboard)
+        
+        print(signUpLabel.gestureRecognizers ?? [])
     }
 
     override func viewDidAppear(_: Bool) {
@@ -195,7 +198,7 @@ final class LoginViewController: UIViewController {
         }
 
         logoImage.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(100)
+            $0.top.equalToSuperview().offset(154)
             $0.centerX.equalToSuperview()
             $0.width.equalTo(logoWidth)
             $0.height.equalTo(logoWidth * logoOriginSize) // 비율 계산
@@ -242,7 +245,7 @@ final class LoginViewController: UIViewController {
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.top.equalTo(joinStackView.snp.bottom).offset(25).priority(249)
             $0.top.greaterThanOrEqualTo(joinStackView.snp.bottom).offset(25).priority(251)
-            $0.bottom.equalToSuperview().offset(-44)
+            $0.bottom.equalToSuperview().offset(-55)
             $0.height.equalTo(50)
         }
     }
