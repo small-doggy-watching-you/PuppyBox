@@ -25,9 +25,9 @@ final class MoviePosterCell: UICollectionViewCell {
         $0.isHidden = true
 
         $0.layer.shadowColor = UIColor.black.cgColor
-        $0.layer.shadowOpacity = 1
-        $0.layer.shadowOffset = CGSize(width: 0, height: 4)
-        $0.layer.shadowRadius = 10
+        $0.layer.shadowOpacity = 0.5
+        $0.layer.shadowOffset = CGSize(width: 1, height: 1)
+        $0.layer.shadowRadius = 2
     }
 
     override init(frame: CGRect) {
