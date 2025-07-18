@@ -92,12 +92,12 @@ class MovieDetailViewController: UIViewController {
         appearance.configureWithTransparentBackground()
         appearance.backgroundColor = .clear
         appearance.backgroundEffect = nil
-
+        
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
         navigationController?.navigationBar.tintColor = .white // 뒤로가기 버튼 색
     }
-
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent // 상태바(시간, 배터리) 흰색
     }
@@ -107,9 +107,12 @@ extension MovieDetailViewController {
     @MainActor
     func presentFullScreenImage() async {
         guard let currentImage = movieDetailView.posterImage else { return }
-        let fullScreenVC = FullScreenImageViewController(image: currentImage)
-        fullScreenVC.modalPresentationStyle = .fullScreen
-        self.present(fullScreenVC, animated: true)
+        
+        let overlay = FullScreenImageOverlayView(image: currentImage) {
+            print("Overlay dismissed")
+        }
+        view.addSubview(overlay)
+        overlay.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
 }
 
