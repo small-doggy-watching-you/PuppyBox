@@ -5,6 +5,7 @@ struct UserDummyData {
             nickname: "테스트 유저",
             userId: "테스트유저1",
             email: "exapmle@example.com",
+            profileImageUrl: "defaultProfile",
             reservedMovie: dummyReservedMovies,
             seenMovie: dummySeenMovies
         )
