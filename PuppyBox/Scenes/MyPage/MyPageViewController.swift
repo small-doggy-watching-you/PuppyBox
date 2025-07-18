@@ -3,8 +3,8 @@ import UIKit
 
 import SnapKit
 import Then
-@available(iOS 17.0, *)
 
+@available(iOS 17.0, *)
 #Preview {
     UINavigationController(rootViewController: MyPageViewController())
 }
@@ -37,6 +37,8 @@ class MyPageViewController: UIViewController {
     
     // ------------------
     
+    var isExpanded = false
+    
     lazy var collectionView = UICollectionView (
         frame: .zero,
         collectionViewLayout: makeLayout()
@@ -61,10 +63,10 @@ class MyPageViewController: UIViewController {
         
         
         viewModel.onStateChanged = { [weak self] _ in
-            guard self != nil else { return }
-            print("updated")
-            
+            guard let self else { return }
+            updateDataSorce()
         }
+
         
     }
     func configureUI() {
@@ -96,7 +98,7 @@ class MyPageViewController: UIViewController {
         }
         
         let movieCellRegistration = UICollectionView.CellRegistration<MovieCell, MyMovie> { cell, indexPath, movie in
-            //            cell.configure(with: movie)
+            cell.configure(with: movie)
         }
         
         // 컬렉션 뷰에서 어떤 셀을 가져와서 사용할지 정의
@@ -117,11 +119,19 @@ class MyPageViewController: UIViewController {
             
             switch section {
             case .reservedMovie:
-                headerView.titleLabel.text = "예약중인 영화" // 더보기 버튼 히든 여기
+                headerView.titleLabel.text = "예매중인 영화"
+                headerView.moreButton.isHidden = true
             case .histories:
                 headerView.titleLabel.text = "관람 기록"
             default :
                 break
+            }
+            
+            headerView.onTapMoreButton = { [weak self] in
+                guard let self else { return }
+                self.isExpanded.toggle()
+                self.updateDataSorce()
+                headerView.moreButton.configuration?.title = self.isExpanded ? "접기" : "더보기"
             }
             return headerView
         }
@@ -143,7 +153,7 @@ class MyPageViewController: UIViewController {
                 let layoutGroup = NSCollectionLayoutGroup.horizontal( // 셀을 담을 공간
                   layoutSize: NSCollectionLayoutSize(
                     widthDimension: .fractionalWidth(1),
-                    heightDimension: .absolute(300)
+                    heightDimension: .absolute(250)
                   ),
                   subitems: [layoutItem]
                 )
@@ -196,43 +206,25 @@ class MyPageViewController: UIViewController {
             profileImagePath: userData.profileImageUrl
         )
         
-        let reservedMovie = userData.reservedMovie
-        let histories = userData.seenMovie
+        let reservedMovie = userData.screeningDate
+        let histories = userData.screeningDate
         
         var snapShot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapShot.appendSections([.userInfo])
         snapShot.appendItems([.userInfo(userInfo)], toSection: .userInfo)
         snapShot.appendSections([.reservedMovie])
         snapShot.appendItems(reservedMovie.map{ .reservedMovie($0)}, toSection: .reservedMovie)
-        snapShot.appendSections([.histories])
-        snapShot.appendItems(histories.map{ .histories($0)}, toSection: .histories)
+        if isExpanded{
+            snapShot.appendSections([.histories])
+            snapShot.appendItems(histories.map{ .histories($0)}, toSection: .histories)
+        } else {
+            snapShot.appendSections([.histories])
+            snapShot.appendItems(histories.prefix(3).map{ .histories($0)}, toSection: .histories)
+        }
         collectionViewDataSource.apply(snapShot)
         
     }
-    
-    /*
-     1. 사용할 목데이터 제작 O
-     
-     2. UICollectionViewCompositionalLayout으로 레이아웃 설정
-     
-     2-1 section
-     2-2 group
-     
-     이거부터 -> 3. UICollectionViewDiffableDataSource<Section, Item>{}로 데이터소스를 만든다.
-     
-     3-1 셀정보 어떤 아이템을 넣을것인지
-     UICollectionView.CellRegistration<셀, 타입? 개인정보 VC에서만 쓰는 타입을 만든다.>
-     
-     3-2
-     dequeueConfiguredReusableCell 주입
-     
-     supplementaryViewProvider 헤더 생성
-     
-     + 라벨과 버튼은 헤더용 새로운 뷰에 넣고 사용 UICollectionReusableView
-     
-     
-     */
-    
+       
     // 섹션 종류
     enum Section {
         case userInfo

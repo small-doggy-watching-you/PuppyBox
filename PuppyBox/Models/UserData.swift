@@ -8,8 +8,8 @@ struct UserData: Hashable {
     let email: String
     let profileImageUrl: String
     
-    let reservedMovie: [MyMovie]
-    let seenMovie: [MyMovie]
+    let screeningDate: [MyMovie]
+    
 }
 
 // 유저데이터중 사용할 것만 섹션으로 쓰기 위해 별도 객체로 생성
