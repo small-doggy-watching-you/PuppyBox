@@ -11,23 +11,37 @@ import Then
 import UIKit
 
 // 위에서부터 포스터이미지, 이미지 위에 겹치는 그라데이션, 그 밑에 검정 백그라운드 뷰
-// 백그라운드 뷰 안을 영화 정보 뷰(MovieInfoView), 그 밑에 예매 뷰(추가예정)로 구성
+// 백그라운드 뷰 안을 영화 정보 뷰(MovieInfoView), 그 밑에 예매 뷰(MovieBookingView)로 구성
 
 class MovieDetailView: UIView {
+    private let movieInfoView = MovieInfoView()
+    private let movieBookingView = MovieBookingView().then {
+        $0.layer.cornerRadius = 12
+        $0.layer.masksToBounds = true
+    }
+    
     var onPosterTapped: (() -> Void)?
     var posterImage: UIImage? {
         return posterImageView.image
     }
-
-    private let movieInfoView = MovieInfoView()
     
-    private let topGradientMaskView = UIView().then { // 이미지 상단 (최상단) 그라데이션
+    private let topGradientMaskView = GradientView().then { // 이미지 상단 (최상단) 그라데이션
+        $0.colors = [
+            UIColor.black,
+            UIColor.clear
+        ]
+        $0.locations = [0.0, 1.0]
+        
         $0.backgroundColor = .clear
         $0.isUserInteractionEnabled = false
     }
     
-    private let gradientMaskView = UIView().then { // 이미지 하단 (글자영역 상단) 그라데이션
-        $0.backgroundColor = .clear
+    private let gradientMaskView = GradientView().then { // 이미지 하단 (글자영역 상단) 그라데이션
+        $0.colors = [
+            UIColor.clear, // 위쪽 투명
+            UIColor.black // 아래쪽 검정
+        ]
+        $0.locations = [0.0, 1.0]
         $0.isUserInteractionEnabled = false
     }
     
@@ -37,9 +51,17 @@ class MovieDetailView: UIView {
         $0.clipsToBounds = true
     }
     
-    private let blackBackgroundView = UIView().then { // 글씨 영역용
+    private let scrollView = UIScrollView().then {
+        $0.showsVerticalScrollIndicator = false
+    }
+    
+    private let contentView = UIView().then { // 포스터 아래 영역용
         $0.backgroundColor = .black
-        $0.clipsToBounds = true
+        //        $0.clipsToBounds = true
+    }
+    
+    private let posterTapView = UIView().then {
+        $0.backgroundColor = .clear
     }
     
     override init(frame: CGRect) {
@@ -56,8 +78,15 @@ class MovieDetailView: UIView {
     private func configureUI() {
         backgroundColor = .black
         
-        for item in [posterImageView, topGradientMaskView, gradientMaskView, blackBackgroundView] {
-            addSubview(item)
+        [
+            posterImageView,
+            topGradientMaskView,
+            scrollView
+        ].forEach { addSubview($0) }
+        
+        posterImageView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+            $0.height.equalTo(posterImageView.snp.width)
         }
         
         topGradientMaskView.snp.makeConstraints {
@@ -65,26 +94,47 @@ class MovieDetailView: UIView {
             $0.height.equalTo(120)
         }
         
-        posterImageView.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(posterImageView.snp.width)
+        scrollView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
+        
+        [
+            gradientMaskView,
+            posterTapView,
+            contentView,
+        ].forEach { scrollView.addSubview($0) }
         
         gradientMaskView.snp.makeConstraints {
-            $0.top.equalTo(posterImageView.snp.bottom).offset(-100) // 겹치기
+            $0.top.equalToSuperview().offset(200)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(100) // 위에랑 같이 설정하기
+            $0.height.equalTo(100)
         }
         
-        blackBackgroundView.snp.makeConstraints {
-            $0.top.equalTo(posterImageView.snp.bottom)
-            $0.leading.trailing.bottom.equalToSuperview()
+        posterTapView.snp.makeConstraints {
+            $0.edges.equalTo(posterImageView)
         }
         
-        blackBackgroundView.addSubview(movieInfoView)
+        contentView.snp.makeConstraints {
+            $0.top.equalTo(gradientMaskView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview()
+            $0.width.equalTo(scrollView.frameLayoutGuide) // 수직 스크롤만 되도록 고정
+        }
+        
+        [
+            movieInfoView,
+            movieBookingView
+        ].forEach { contentView.addSubview($0) }
         
         movieInfoView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.leading.trailing.equalToSuperview()
+        }
+        
+        movieBookingView.snp.makeConstraints {
+            $0.top.equalTo(movieInfoView.snp.bottom).offset(8)
+            $0.leading.trailing.equalToSuperview().inset(8)
+            $0.bottom.equalToSuperview().inset(8)
+            $0.height.equalTo(500)
         }
     }
     
@@ -98,8 +148,8 @@ class MovieDetailView: UIView {
     
     private func setupGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapPoster))
-        posterImageView.isUserInteractionEnabled = true
-        posterImageView.addGestureRecognizer(tapGesture)
+        posterTapView.isUserInteractionEnabled = true
+        posterTapView.addGestureRecognizer(tapGesture)
     }
     
     @objc
@@ -109,34 +159,7 @@ class MovieDetailView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        applyGradient()
-        applyTopGradient()
-    }
-    
-    private func applyTopGradient() {
-        topGradientMaskView.layer.sublayers?.removeAll(where: { $0 is CAGradientLayer })
-        
-        let gradient = CAGradientLayer()
-        gradient.colors = [
-            UIColor.black.withAlphaComponent(0.4).cgColor, // 위쪽은 살짝 어둡게
-            UIColor.clear.cgColor // 아래로 갈수록 투명
-        ]
-        gradient.locations = [0.0, 1.0]
-        gradient.frame = topGradientMaskView.bounds
-        topGradientMaskView.layer.insertSublayer(gradient, at: 0)
-    }
-    
-    private func applyGradient() {
-        gradientMaskView.layer.sublayers?.removeAll(where: { $0 is CAGradientLayer }) // 이미 있으면 제거
-        
-        let gradient = CAGradientLayer()
-        gradient.colors = [
-            UIColor.clear.cgColor, // 위쪽 투명
-            UIColor.black.cgColor // 아래쪽 검정
-        ]
-        gradient.locations = [0.0, 1.0]
-        gradient.frame = gradientMaskView.bounds
-        gradientMaskView.layer.insertSublayer(gradient, at: 0)
+        print("gradientMaskView.bounds: \(gradientMaskView.bounds)")
     }
 }
 
