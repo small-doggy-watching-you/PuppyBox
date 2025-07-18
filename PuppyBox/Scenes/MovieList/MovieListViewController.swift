@@ -29,6 +29,7 @@ class MovieListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.backButtonDisplayMode = .minimal
         view.backgroundColor = .white
         setupHeader()
         setupCollectionView()
@@ -140,7 +141,8 @@ class MovieListViewController: UIViewController {
         }
 
         if let movie {
-            print("선택한 영화 : \(movie.title)")
+            let detailVC = MovieDetailViewController(movie: movie)
+            navigationController?.pushViewController(detailVC, animated: true)
         }
     }
 }
