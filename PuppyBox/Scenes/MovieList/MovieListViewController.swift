@@ -29,6 +29,7 @@ class MovieListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.backButtonDisplayMode = .minimal
         view.backgroundColor = .white
         setupHeader()
         setupCollectionView()
@@ -123,6 +124,27 @@ class MovieListViewController: UIViewController {
             return section
         }
     }
+
+    @objc private func handlePosterButtonTap(_ sender: UIButton) {
+        guard let sectionString = sender.accessibilityIdentifier,
+              let section = Int(sectionString) else { return }
+        let row = sender.tag
+
+        let movie: MovieResults?
+        switch section {
+        case 0: movie = viewModel.state.movieChart[row]
+        case 1:
+            let reversedIndex = viewModel.state.nowPlaying.count - 1 - row
+            movie = viewModel.state.nowPlaying[reversedIndex]
+        case 2: movie = viewModel.state.upcoming[row]
+        default: movie = nil
+        }
+
+        if let movie {
+            let detailVC = MovieDetailViewController(movie: movie)
+            navigationController?.pushViewController(detailVC, animated: true)
+        }
+    }
 }
 
 extension MovieListViewController: UICollectionViewDataSource {
@@ -151,6 +173,17 @@ extension MovieListViewController: UICollectionViewDataSource {
         default: movie = nil
         }
         cell.setImage(with: movie?.posterPath)
+
+        cell.posterButton.tag = indexPath.row
+        cell.posterButton.accessibilityIdentifier = "\(indexPath.section)"
+        cell.posterButton.addTarget(self, action: #selector(handlePosterButtonTap(_:)), for: .touchUpInside)
+
+        if indexPath.section == 0 {
+            cell.setNumber(indexPath.item + 1)
+        } else {
+            cell.setNumber(nil)
+        }
+
         return cell
     }
 

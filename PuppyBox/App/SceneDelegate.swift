@@ -19,8 +19,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        navi.setViewControllers([LoginViewController()], animated: false)
 //        navi.setViewControllers( [MovieDetailViewController(movie: MovieResults(adult: false, backdropPath: "/nKyBbFSooRPTJVqjrDteD1lF733.jpg", genreIds: [28, 12, 18], id: 1011477, originalLanguage: "en", originalTitle: "Karate Kid: Legends", overview: "서로 다른 세대의 스승 미스터 한(성룡)과 다니엘 라루소(랄프 마치오)가 소년 '리'를 중심으로 힘을 합치며 펼쳐지는 무술 성장 드라마. 과거의 철학과 기술을 계승한 두 사부는 삶의 벽에 부딪힌 리에게 가라데의 진정한 의미를 전하며 함께 성장한다.", popularity: 750.3586, posterPath: "/AEgggzRr1vZCLY86MAp93li43z.jpg", releaseDate: "2025-05-08", title: "가라데 키드: 레전드", video: false, voteAverage: 7.314, voteCount: 388) )], animated: false )
 
-        window.rootViewController = MainTabBarController()
+//        window.rootViewController = MainTabBarController()
         // window.rootViewController = navi
+        window.rootViewController = UINavigationController(rootViewController: LoginViewController())
         window.makeKeyAndVisible()
         self.window = window
     }

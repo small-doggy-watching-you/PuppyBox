@@ -42,7 +42,7 @@ class MainTabBarController: UITabBarController {
             image: UIImage(systemName: "person"),
             selectedImage: UIImage(systemName: "person.fill")
         )
-        myPageNav.isNavigationBarHidden = true
+        myPageNav.isNavigationBarHidden = false
 
         viewControllers = [homeNav, searchNav, myPageNav]
     }
