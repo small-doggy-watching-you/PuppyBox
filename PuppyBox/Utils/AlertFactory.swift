@@ -28,6 +28,17 @@ enum AlertFactory {
         return alert
     }
     
-    
+    static func paymentConfirmAlert(totalPrice: Int, completion: @escaping () -> Void) -> UIAlertController {
+            let alert = UIAlertController(
+                title: "결제 확인",
+                message: "총 \(totalPrice)원을 결제하시겠습니까?",
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+            alert.addAction(UIAlertAction(title: "승인", style: .default) { _ in
+                completion()
+            })
+            return alert
+        }
     
 }

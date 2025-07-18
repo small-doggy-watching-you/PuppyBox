@@ -17,6 +17,7 @@ class MovieDetailViewController: UIViewController {
     init(movie: MovieResults) {
         self.viewModel = MovieDetailViewModel(movie: movie)
         super.init(nibName: nil, bundle: nil)
+        hidesBottomBarWhenPushed = true
     }
     
     @available(*, unavailable)
@@ -30,6 +31,11 @@ class MovieDetailViewController: UIViewController {
         setupNavigationBar()
         bindViewModel()
         bindActions()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+//        navigationController?.navigationBar.tintColor = .init()
     }
     
     private func setupView() {
@@ -93,9 +99,11 @@ class MovieDetailViewController: UIViewController {
         appearance.configureWithTransparentBackground()
         appearance.backgroundColor = .clear
         appearance.backgroundEffect = nil
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
-        navigationController?.navigationBar.tintColor = .white // 뒤로가기 버튼 색
+        navigationItem.standardAppearance = appearance
+        navigationItem.scrollEdgeAppearance = appearance
+        navigationItem.backButtonDisplayMode = .minimal // 뒤로가기 텍스트 제거
+        navigationController?.navigationBar.tintColor = .white // 뒤로가기 버튼 색 <- 문제가 생길 수 있음
+        navigationItem.largeTitleDisplayMode = .never // 이거 나중에 확인
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
