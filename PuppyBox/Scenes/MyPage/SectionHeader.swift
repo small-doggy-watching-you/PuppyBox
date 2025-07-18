@@ -20,15 +20,15 @@ final class SectionHeaderView: UICollectionReusableView {
             return outgoing
         }
     }
-    
+
     var onTapMoreButton: (() -> Void)?
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+
         addSubview(titleLabel)
         addSubview(moreButton)
-        
+
         moreButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             self.onTapMoreButton?()
@@ -37,17 +37,15 @@ final class SectionHeaderView: UICollectionReusableView {
         titleLabel.snp.makeConstraints {
             $0.leading.top.bottom.equalToSuperview()
         }
-        
+
         moreButton.snp.makeConstraints {
             $0.centerY.equalTo(titleLabel)
             $0.trailing.equalToSuperview()
         }
-    
     }
-    
+
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 }
