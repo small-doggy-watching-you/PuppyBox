@@ -1,0 +1,36 @@
+//
+//  MoviePosterCell.swift
+//  PuppyBox
+//
+//  Created by 노가현 on 7/17/25.
+//
+
+import UIKit
+import Kingfisher
+
+final class MoviePosterCell: UICollectionViewCell {
+    static let identifier = "MoviePosterCell"
+
+    private let imageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFill
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 8
+        $0.backgroundColor = .systemGray5
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        contentView.addSubview(imageView)
+        imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func setImage(with path: String?) {
+        guard let path = path else { return }
+        let url = URL(string: "https://image.tmdb.org/t/p/original\(path)")
+        imageView.kf.setImage(with: url)
+    }
+}

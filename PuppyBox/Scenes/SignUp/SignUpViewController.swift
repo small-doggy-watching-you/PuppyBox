@@ -290,7 +290,7 @@ final class SignUpViewController: UIViewController {
 
         signUpButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(30)
-            $0.top.equalTo(phoneNumberTextField.snp.bottom).offset(25).priority(.low)
+            $0.top.equalTo(phoneNumberTextField.snp.bottom).offset(25).priority(249)
             $0.top.greaterThanOrEqualTo(phoneNumberTextField.snp.bottom).offset(25)
             $0.bottom.equalToSuperview().offset(-20)
             $0.height.equalTo(50)
