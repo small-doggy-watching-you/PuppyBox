@@ -3,12 +3,15 @@ import UIKit
 
 import SnapKit
 import Then
+import Kingfisher
 
 final class MovieCell: UICollectionViewCell {
     static let identifier = String(describing: MovieCell.self)
     
     private let moviePosterView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
+        $0.clipsToBounds = true
+        $0.backgroundColor = .systemGray5
     }
     
     private let movieNameLabel = UILabel().then {
@@ -28,7 +31,6 @@ final class MovieCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .systemBrown
     }
     
     @available(*, unavailable)
@@ -46,15 +48,18 @@ final class MovieCell: UICollectionViewCell {
         
         movieNameLabel.text = movie.movieName
         dateLabel.text = movie.screeningDate
+        if let url = URL(string: movie.posterImagePath) {
+            moviePosterView.kf.setImage(with: url)
+        }
         
         moviePosterView.snp.makeConstraints {
-            $0.top.bottom.leading.edges.equalToSuperview()
+            $0.top.bottom.leading.equalToSuperview()
             $0.width.equalTo(92)
         }
         
         stackView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.equalTo(moviePosterView).offset(20)
+            $0.leading.equalTo(moviePosterView.snp.trailing).offset(10)
         }
         
     }

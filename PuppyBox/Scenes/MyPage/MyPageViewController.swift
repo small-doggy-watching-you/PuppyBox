@@ -66,7 +66,17 @@ class MyPageViewController: UIViewController {
             guard let self else { return }
             updateDataSorce()
         }
-
+        
+        logoutButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            let loginVC = LoginViewController()
+            loginVC.modalPresentationStyle = .fullScreen
+            present(loginVC, animated: true)
+        }, for: .touchUpInside)
+        
+    
+        
+        
         
     }
     func configureUI() {
@@ -173,7 +183,7 @@ class MyPageViewController: UIViewController {
                 let layoutGroup = NSCollectionLayoutGroup.horizontal(
                   layoutSize: NSCollectionLayoutSize(
                     widthDimension: .fractionalWidth(1),
-                    heightDimension: .absolute(72)
+                    heightDimension: .absolute(138)
                   ),
                   subitems: [layoutItem]
                 )

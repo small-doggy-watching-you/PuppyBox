@@ -28,15 +28,12 @@ final class UserInfoCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .systemOrange
     }
     
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
     
     func configure(with userInfo: UserInfo) {
         contentView.addSubview(profileImageView)
