@@ -144,7 +144,9 @@ extension MovieListViewController: UICollectionViewDataSource {
         let movie: MovieResults?
         switch indexPath.section {
         case 0: movie = viewModel.state.movieChart[indexPath.item]
-        case 1: movie = viewModel.state.nowPlaying[indexPath.item]
+        case 1:
+            let reversedIndex = viewModel.state.nowPlaying.count - 1 - indexPath.item
+            movie = viewModel.state.nowPlaying[reversedIndex]
         case 2: movie = viewModel.state.upcoming[indexPath.item]
         default: movie = nil
         }
