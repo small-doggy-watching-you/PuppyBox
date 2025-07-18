@@ -15,7 +15,7 @@ import UIKit
 
 class MovieDetailView: UIView {
     private let movieInfoView = MovieInfoView()
-    private let movieBookingView = MovieBookingView().then {
+    let movieBookingView = MovieBookingView().then {
         $0.layer.cornerRadius = 12
         $0.layer.masksToBounds = true
     }

@@ -52,6 +52,15 @@ class MovieDetailViewController: UIViewController {
                 await self.presentFullScreenImage()
             }
         }
+        
+        movieDetailView.movieBookingView.onSelectSeat = { [weak self] date, time, adult, child in
+            guard let self = self else { return }
+            
+            guard let movie = self.viewModel.state.movie else { return }
+            
+            let seatVC = SeatSelectionViewController(movie: movie, selectedDate: date, selectedTime: time, adultCount: adult, childCount: child)
+            self.navigationController?.pushViewController(seatVC, animated: true)
+        }
     }
     
     func configure(with movie: MovieResults) {
