@@ -109,4 +109,30 @@ final class CoreDataManager {
         // 입력한 패스워드와 일치하면 true 다를경우 false
         return account.password == password ? true : false
     }
+
+    // 생성가능한 유저 아이디인지 확인
+    func userIdVerfication(userId: String) -> Bool {
+        let fetchRequest: NSFetchRequest<Account> = Account.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
+        guard ((try? context.fetch(fetchRequest))?.first) != nil else {
+            // 일치하는 데이터가 없을 경우 true(생성 가능)
+            return true
+        }
+        // 일치하는 데이터 존재할 경우 false(생성불가)
+        return false
+    }
+
+    func createUser(userId: String, name: String, password: String, email: String?, phone: String?) {
+        let guest = Account(context: context)
+        guest.id = UUID()
+        guest.userId = userId
+        guest.name = name
+        guest.password = password
+        guest.email = email ?? ""
+        guest.phone = phone ?? ""
+        guest.profile = nil
+        guest.isAdmin = false
+
+        saveContext()
+    }
 }

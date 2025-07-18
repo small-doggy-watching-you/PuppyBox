@@ -50,6 +50,7 @@ final class LoginViewController: UIViewController {
         $0.autocapitalizationType = .none // 자동 대문자 변환 무시
         $0.autocorrectionType = .no // 자동 수정 무시
         $0.smartQuotesType = .no // 스마트 구두점 무시
+        $0.textContentType = .username
     }
 
     // 비밀번호 글자 라벨
@@ -67,6 +68,7 @@ final class LoginViewController: UIViewController {
         $0.autocapitalizationType = .none
         $0.autocorrectionType = .no
         $0.smartQuotesType = .no
+        $0.textContentType = .password
     }
 
     // 비밀번호 잘못 입력시 출력할 라벨
@@ -122,6 +124,7 @@ final class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        navigationItem.title = "로그인"
 
         configureUI() // UI 생성
         DummyService.createBasicAccount() // 더미생성 함수
