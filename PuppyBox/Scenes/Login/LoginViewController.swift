@@ -256,9 +256,9 @@ final class LoginViewController: UIViewController {
             self.password = password
 
             // 페이지 이동
-            let movieListVC = MovieListViewController()
-            movieListVC.modalPresentationStyle = .fullScreen
-            present(movieListVC, animated: true)
+            let mainTabBarVC = MainTabBarController()
+            mainTabBarVC.modalPresentationStyle = .fullScreen
+            present(mainTabBarVC, animated: true)
 
         } else {
             // "비밀번호를 잘못 입력했습니다"의 히든 해제
