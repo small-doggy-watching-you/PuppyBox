@@ -14,7 +14,7 @@ final class SignUpViewController: UIViewController {
 
     private let logoOriginSize: CGFloat = 131 / 512 // 비율용 로고 원본 사이즈
     private let logoWidth: CGFloat = 100 // 로고 너비 설정상수
-    let defaults = UserDefaults.standard // 유저 디폴트
+    private var isCheckDuplicaiton: Bool = false
 
     // MARK: - UI Components
 
@@ -45,6 +45,7 @@ final class SignUpViewController: UIViewController {
         $0.autocapitalizationType = .none // 자동 대문자 변환 무시
         $0.autocorrectionType = .no // 자동 수정 무시
         $0.smartQuotesType = .no // 스마트 구두점 무시
+        $0.textContentType = .username
     }
 
     // 중복확인 버튼
@@ -70,6 +71,7 @@ final class SignUpViewController: UIViewController {
         $0.autocapitalizationType = .none // 자동 대문자 변환 무시
         $0.autocorrectionType = .no // 자동 수정 무시
         $0.smartQuotesType = .no // 스마트 구두점 무시
+        $0.textContentType = .nickname
     }
 
     // 비밀번호 글자 라벨
@@ -87,6 +89,7 @@ final class SignUpViewController: UIViewController {
         $0.autocapitalizationType = .none
         $0.autocorrectionType = .no
         $0.smartQuotesType = .no
+        $0.textContentType = .newPassword
     }
 
     // 비밀번호 확인란
@@ -97,6 +100,7 @@ final class SignUpViewController: UIViewController {
         $0.autocapitalizationType = .none
         $0.autocorrectionType = .no
         $0.smartQuotesType = .no
+        $0.textContentType = .newPassword
     }
 
     // 이메일 주소 글자 라벨
@@ -113,6 +117,7 @@ final class SignUpViewController: UIViewController {
         $0.autocapitalizationType = .none // 자동 대문자 변환 무시
         $0.autocorrectionType = .no // 자동 수정 무시
         $0.smartQuotesType = .no // 스마트 구두점 무시
+        $0.textContentType = .emailAddress
     }
 
     // 휴대폰 번호 글자 라벨
@@ -122,13 +127,14 @@ final class SignUpViewController: UIViewController {
         $0.textColor = .label
     }
 
-    // 닉네임 입력란
+    // 휴대폰 번호 입력란
     private let phoneNumberTextField = UITextField().then {
         $0.borderStyle = .roundedRect
         $0.placeholder = "휴대폰 번호"
         $0.autocapitalizationType = .none // 자동 대문자 변환 무시
         $0.autocorrectionType = .no // 자동 수정 무시
         $0.smartQuotesType = .no // 스마트 구두점 무시
+        $0.textContentType = .telephoneNumber
     }
 
     // 회원가입 버튼
@@ -146,8 +152,46 @@ final class SignUpViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        navigationController?.navigationBar.tintColor = .appPrimary
 
         configureUI()
+
+        // 아이디 입력란 감지액션 추가
+        idTextField.addTarget(self, action: #selector(idTextFieldDidChange(_:)), for: .editingChanged)
+
+        // 중복확인 버튼액션
+        checkDuplicationButton.addAction(UIAction { [weak self] _ in
+            guard let self,
+                  let userId = self.idTextField.text
+            else { return }
+
+            let chk = CoreDataManager.shared.userIdVerfication(userId: userId)
+
+            if chk { // 생성 가능한 Id일 경우
+                let alert = AlertFactory.userIdPossibleAlert()
+                present(alert, animated: true)
+                isCheckDuplicaiton = true
+                idTextField.isEnabled = false
+            } else {
+                let alert = AlertFactory.userIdNotPossibleAlert()
+                present(alert, animated: true)
+            }
+
+        }, for: .touchUpInside)
+
+        // 가입하기 버튼액션
+        signUpButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            if checkValidaiton() { // 가능한 아이디일 경우 유저 등록
+                CoreDataManager.shared.createUser(
+                    userId: idTextField.text ?? "",
+                    name: nickNameTextField.text ?? "",
+                    password: passwordTextField.text ?? "",
+                    email: emailTextField.text,
+                    phone: phoneNumberTextField.text
+                )
+            }
+        }, for: .touchUpInside)
     }
 
     // 로그인화면 키보드 레이아웃 버그 해결용
@@ -294,6 +338,82 @@ final class SignUpViewController: UIViewController {
             $0.top.greaterThanOrEqualTo(phoneNumberTextField.snp.bottom).offset(25)
             $0.bottom.equalToSuperview().offset(-20)
             $0.height.equalTo(50)
+        }
+    }
+
+    // 텍스트 필드가 채워지면 버튼 활성화
+    @objc
+    private func idTextFieldDidChange(_: UITextField) {
+        let input = idTextField.text ?? ""
+        let inputtext = input.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if input != inputtext { // 좌우에 공백이 들어오면 비활성화
+            checkButtonDisable()
+            return
+        }
+
+        if input.isEmpty { // 비어있으면 버튼 비활성화
+            checkButtonDisable()
+        } else { // 셀에 내용이 있으면 버튼 활성화
+            checkButtonEnable()
+        }
+    }
+
+    // 중복 확인 버튼 활성화
+    private func checkButtonEnable() {
+        checkDuplicationButton.isEnabled = true
+        checkDuplicationButton.setTitleColor(.systemBackground, for: .normal)
+        checkDuplicationButton.backgroundColor = .appPrimary
+    }
+
+    // 중복 확인 버튼 비활성화
+    private func checkButtonDisable() {
+        checkDuplicationButton.isEnabled = false
+        checkDuplicationButton.setTitleColor(.systemGray3, for: .normal)
+        checkDuplicationButton.backgroundColor = .systemGray6
+    }
+
+    // 유효성 검사
+    private func checkValidaiton() -> Bool {
+        var flg = true
+        var errorMsgBox: [String] = []
+
+        if !isCheckDuplicaiton { // 중복 확인을 눌렀는지
+            flg = false
+            errorMsgBox.append("아이디 중복 확인을 해주세요.")
+        }
+
+        if let nickNameTextField = nickNameTextField.text,
+           nickNameTextField.isEmpty
+        { // 닉네임을 채웠는지
+            flg = false
+            errorMsgBox.append("닉네임을 입력해주세요")
+        }
+
+        if let passwordTextField = passwordTextField.text,
+           let passwordConfirmTextField = passwordConfirmTextField.text
+        { // 패스워드 칸을 채웠는지
+            if passwordTextField.isEmpty {
+                flg = false
+                errorMsgBox.append("비밀번호를 입력해주세요")
+            }
+            if passwordTextField != passwordConfirmTextField { // 일치한지
+                flg = false
+                errorMsgBox.append("비밀번호가 일치하지 않습니다")
+            }
+        }
+
+        if flg { // 가능할경우 회원가입 완료 Alert 띄우고 팝
+            let alert = AlertFactory.signUpPossible { [weak self] in
+                self?.navigationController?.popToRootViewController(animated: true)
+            }
+            present(alert, animated: true)
+            return true
+        } else { // 실패시 확인 메시지를 띄우고 추가
+            let message = errorMsgBox.joined(separator: "\n")
+            let alert = AlertFactory.signUpNotPossible(message: message)
+            present(alert, animated: true)
+            return false
         }
     }
 }
