@@ -33,6 +33,7 @@ final class LoginViewController: UIViewController {
         $0.text = "로그인"
         $0.font = .systemFont(ofSize: 32, weight: .bold)
         $0.textColor = .label
+        $0.setContentHuggingPriority(.defaultHigh, for: .vertical)
     }
 
     // 아이디 글자 라벨
@@ -236,9 +237,8 @@ final class LoginViewController: UIViewController {
 
         loginButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(30)
-            $0.leading.trailing.equalToSuperview().inset(30)
-            $0.top.equalTo(joinStackView.snp.bottom).offset(25).priority(.low)
-            $0.top.greaterThanOrEqualTo(joinStackView.snp.bottom).offset(25)
+            $0.top.equalTo(joinStackView.snp.bottom).offset(25).priority(249)
+            $0.top.greaterThanOrEqualTo(joinStackView.snp.bottom).offset(25).priority(251)
             $0.bottom.equalToSuperview().offset(-20)
             $0.height.equalTo(50)
         }
