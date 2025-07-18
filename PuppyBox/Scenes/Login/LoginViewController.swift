@@ -8,7 +8,7 @@ final class LoginViewController: UIViewController {
     // MARK: - Properties
 
     private let logoOriginSize: CGFloat = 131 / 512 // 비율용 로고 원본 사이즈
-    private let logoWidth: CGFloat = 150 // 로고 너비 설정상수
+    private let logoWidth: CGFloat = 140.62 // 로고 너비 설정상수
     let defaults = UserDefaults.standard // 유저 디폴트
 
     @UserSetting(key: UDKey.userId, defaultValue: "")
@@ -31,7 +31,7 @@ final class LoginViewController: UIViewController {
     // 로그인 글자 라벨 (이미지 하단)
     private let loginLabel = UILabel().then {
         $0.text = "로그인"
-        $0.font = .systemFont(ofSize: 32, weight: .bold)
+        $0.font = .systemFont(ofSize: 24, weight: .bold)
         $0.textColor = .label
         $0.setContentHuggingPriority(.defaultHigh, for: .vertical)
     }
@@ -190,7 +190,7 @@ final class LoginViewController: UIViewController {
 
         contentView.snp.makeConstraints {
             $0.top.bottom.equalTo(scrollView.contentLayoutGuide)
-            $0.leading.trailing.equalTo(scrollView.frameLayoutGuide).inset(20) // 수직 스크롤으로 고정
+            $0.leading.trailing.equalTo(scrollView.frameLayoutGuide).inset(16) // 수직 스크롤으로 고정
             $0.width.equalTo(scrollView.contentLayoutGuide)
         }
 
@@ -207,7 +207,7 @@ final class LoginViewController: UIViewController {
         }
 
         idLabel.snp.makeConstraints {
-            $0.top.equalTo(loginLabel.snp.bottom).offset(50)
+            $0.top.equalTo(loginLabel.snp.bottom).offset(40)
             $0.leading.equalToSuperview()
         }
 
@@ -218,7 +218,7 @@ final class LoginViewController: UIViewController {
         }
 
         passwordLabel.snp.makeConstraints {
-            $0.top.equalTo(idTextField.snp.bottom).offset(25)
+            $0.top.equalTo(idTextField.snp.bottom).offset(20)
             $0.leading.equalToSuperview()
         }
 
@@ -229,20 +229,20 @@ final class LoginViewController: UIViewController {
         }
 
         wrongPasswordLabel.snp.makeConstraints {
-            $0.top.equalTo(passwordTextField.snp.bottom).offset(5)
+            $0.top.equalTo(passwordTextField.snp.bottom).offset(6)
             $0.left.equalToSuperview()
         }
 
         joinStackView.snp.makeConstraints {
-            $0.top.equalTo(passwordTextField.snp.bottom).offset(50)
+            $0.top.equalTo(passwordTextField.snp.bottom).offset(24)
             $0.centerX.equalToSuperview()
         }
 
         loginButton.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(30)
+            $0.leading.trailing.equalToSuperview().inset(16)
             $0.top.equalTo(joinStackView.snp.bottom).offset(25).priority(249)
             $0.top.greaterThanOrEqualTo(joinStackView.snp.bottom).offset(25).priority(251)
-            $0.bottom.equalToSuperview().offset(-20)
+            $0.bottom.equalToSuperview().offset(-44)
             $0.height.equalTo(50)
         }
     }
