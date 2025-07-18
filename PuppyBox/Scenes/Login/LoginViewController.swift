@@ -33,6 +33,7 @@ final class LoginViewController: UIViewController {
         $0.text = "로그인"
         $0.font = .systemFont(ofSize: 32, weight: .bold)
         $0.textColor = .label
+        $0.setContentHuggingPriority(.defaultHigh, for: .vertical)
     }
 
     // 아이디 글자 라벨
@@ -112,6 +113,10 @@ final class LoginViewController: UIViewController {
         $0.spacing = 5
     }
 
+    // 스크롤뷰
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
+
     // MARK: - Methods
 
     override func viewDidLoad() {
@@ -133,6 +138,9 @@ final class LoginViewController: UIViewController {
         // 회원가입 라벨에 액션주입
         let tapSignUp = UITapGestureRecognizer(target: self, action: #selector(didTapSignUpLabel))
         signUpLabel.addGestureRecognizer(tapSignUp)
+
+        let tapDismissKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapDismissKeyboard)
     }
 
     override func viewDidAppear(_: Bool) {
@@ -157,16 +165,34 @@ final class LoginViewController: UIViewController {
         ]
 
         for item in itemList {
-            view.addSubview(item)
+            contentView.addSubview(item)
         }
 
         joinStackView.addArrangedSubview(alreadyAccountLabel)
         joinStackView.addArrangedSubview(deviderLabel)
         joinStackView.addArrangedSubview(signUpLabel)
 
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+
         // 오토 레이아웃 적용
+        scrollView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.keyboardLayoutGuide.snp.top)
+        }
+
+        scrollView.contentLayoutGuide.snp.makeConstraints {
+            $0.height.equalTo(scrollView.safeAreaLayoutGuide).priority(.low)
+        }
+
+        contentView.snp.makeConstraints {
+            $0.top.bottom.equalTo(scrollView.contentLayoutGuide)
+            $0.leading.trailing.equalTo(scrollView.frameLayoutGuide).inset(20) // 수직 스크롤으로 고정
+            $0.width.equalTo(scrollView.contentLayoutGuide)
+        }
+
         logoImage.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(100)
+            $0.top.equalToSuperview().offset(100)
             $0.centerX.equalToSuperview()
             $0.width.equalTo(logoWidth)
             $0.height.equalTo(logoWidth * logoOriginSize) // 비율 계산
@@ -179,31 +205,29 @@ final class LoginViewController: UIViewController {
 
         idLabel.snp.makeConstraints {
             $0.top.equalTo(loginLabel.snp.bottom).offset(50)
-            $0.leading.equalTo(view.safeAreaLayoutGuide).offset(20)
+            $0.leading.equalToSuperview()
         }
 
         idTextField.snp.makeConstraints {
             $0.top.equalTo(idLabel.snp.bottom).offset(10)
-            $0.leading.equalTo(idLabel)
-            $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(40)
         }
 
         passwordLabel.snp.makeConstraints {
             $0.top.equalTo(idTextField.snp.bottom).offset(25)
-            $0.leading.equalTo(idLabel)
+            $0.leading.equalToSuperview()
         }
 
         passwordTextField.snp.makeConstraints {
             $0.top.equalTo(passwordLabel.snp.bottom).offset(10)
-            $0.leading.equalTo(idLabel)
-            $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(40)
         }
 
         wrongPasswordLabel.snp.makeConstraints {
             $0.top.equalTo(passwordTextField.snp.bottom).offset(5)
-            $0.left.equalTo(idLabel)
+            $0.left.equalToSuperview()
         }
 
         joinStackView.snp.makeConstraints {
@@ -212,8 +236,10 @@ final class LoginViewController: UIViewController {
         }
 
         loginButton.snp.makeConstraints {
-            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(30)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)
+            $0.leading.trailing.equalToSuperview().inset(30)
+            $0.top.equalTo(joinStackView.snp.bottom).offset(25).priority(249)
+            $0.top.greaterThanOrEqualTo(joinStackView.snp.bottom).offset(25).priority(251)
+            $0.bottom.equalToSuperview().offset(-20)
             $0.height.equalTo(50)
         }
     }
@@ -245,5 +271,11 @@ final class LoginViewController: UIViewController {
     private func didTapSignUpLabel() {
         let signUpVC = SignUpViewController()
         navigationController?.pushViewController(signUpVC, animated: true)
+    }
+
+    // 키보드 내리는 액션
+    @objc
+    private func dismissKeyboard() {
+        view.endEditing(true)
     }
 }

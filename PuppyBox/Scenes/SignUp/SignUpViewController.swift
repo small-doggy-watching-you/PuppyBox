@@ -150,6 +150,18 @@ final class SignUpViewController: UIViewController {
         configureUI()
     }
 
+    // 로그인화면 키보드 레이아웃 버그 해결용
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        view.endEditing(true)
+    }
+
+    // 화면 진입시 첫 텍스트필드에 포커스
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        idTextField.becomeFirstResponder()
+    }
+
     private func configureUI() {
         let itemList = [
             logoImage,
@@ -278,7 +290,7 @@ final class SignUpViewController: UIViewController {
 
         signUpButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(30)
-            $0.top.equalTo(phoneNumberTextField.snp.bottom).offset(25).priority(.low)
+            $0.top.equalTo(phoneNumberTextField.snp.bottom).offset(25).priority(249)
             $0.top.greaterThanOrEqualTo(phoneNumberTextField.snp.bottom).offset(25)
             $0.bottom.equalToSuperview().offset(-20)
             $0.height.equalTo(50)
