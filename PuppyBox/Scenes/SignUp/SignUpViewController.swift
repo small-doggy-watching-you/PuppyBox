@@ -45,6 +45,7 @@ final class SignUpViewController: UIViewController {
         $0.autocapitalizationType = .none // 자동 대문자 변환 무시
         $0.autocorrectionType = .no // 자동 수정 무시
         $0.smartQuotesType = .no // 스마트 구두점 무시
+        $0.textContentType = .username
     }
 
     // 중복확인 버튼
@@ -70,6 +71,7 @@ final class SignUpViewController: UIViewController {
         $0.autocapitalizationType = .none // 자동 대문자 변환 무시
         $0.autocorrectionType = .no // 자동 수정 무시
         $0.smartQuotesType = .no // 스마트 구두점 무시
+        $0.textContentType = .nickname
     }
 
     // 비밀번호 글자 라벨
@@ -87,7 +89,7 @@ final class SignUpViewController: UIViewController {
         $0.autocapitalizationType = .none
         $0.autocorrectionType = .no
         $0.smartQuotesType = .no
-        $0.textContentType = .password
+        $0.textContentType = .newPassword
     }
 
     // 비밀번호 확인란
@@ -98,7 +100,7 @@ final class SignUpViewController: UIViewController {
         $0.autocapitalizationType = .none
         $0.autocorrectionType = .no
         $0.smartQuotesType = .no
-        $0.textContentType = .password
+        $0.textContentType = .newPassword
     }
 
     // 이메일 주소 글자 라벨
@@ -125,13 +127,14 @@ final class SignUpViewController: UIViewController {
         $0.textColor = .label
     }
 
-    // 닉네임 입력란
+    // 휴대폰 번호 입력란
     private let phoneNumberTextField = UITextField().then {
         $0.borderStyle = .roundedRect
         $0.placeholder = "휴대폰 번호"
         $0.autocapitalizationType = .none // 자동 대문자 변환 무시
         $0.autocorrectionType = .no // 자동 수정 무시
         $0.smartQuotesType = .no // 스마트 구두점 무시
+        $0.textContentType = .telephoneNumber
     }
 
     // 회원가입 버튼
