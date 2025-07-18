@@ -39,7 +39,7 @@ final class MoviePosterCell: UICollectionViewCell {
 
         numberLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(8)
-            $0.bottom.equalToSuperview().offset(-8)
+            $0.bottom.equalToSuperview()
         }
     }
 
