@@ -86,7 +86,7 @@ class MovieDetailView: UIView {
         
         posterImageView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(posterImageView.snp.width)
+            $0.height.equalTo(posterImageView.snp.width).multipliedBy(1.5)
         }
         
         topGradientMaskView.snp.makeConstraints {
@@ -111,13 +111,14 @@ class MovieDetailView: UIView {
         }
         
         posterTapView.snp.makeConstraints {
-            $0.edges.equalTo(posterImageView)
+            $0.top.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(gradientMaskView.snp.bottom)
         }
         
         contentView.snp.makeConstraints {
             $0.top.equalTo(gradientMaskView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview()
+            $0.bottom.equalTo(scrollView.contentLayoutGuide)
             $0.width.equalTo(scrollView.frameLayoutGuide) // 수직 스크롤만 되도록 고정
         }
         
