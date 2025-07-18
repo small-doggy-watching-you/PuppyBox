@@ -4,7 +4,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class SectionHeaderView: UICollectionReusableView {
+final class MyPageSectionHeaderView: UICollectionReusableView {
     let titleLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 22, weight: .bold)
         $0.textColor = .label

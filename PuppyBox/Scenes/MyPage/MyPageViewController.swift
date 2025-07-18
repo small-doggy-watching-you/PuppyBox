@@ -86,7 +86,7 @@ class MyPageViewController: UIViewController {
         }
 
         // 섹션 정의할 거 등록
-        collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderView")
+        collectionView.register(MyPageSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderView")
 
         updateDataSorce()
     }
@@ -114,7 +114,7 @@ class MyPageViewController: UIViewController {
         // 섹션에 들어갈 뷰에 대한 정의
         dataSource.supplementaryViewProvider = { [weak dataSource] collectionView, kind, indexPath in
             guard let section = dataSource?.sectionIdentifier(for: indexPath.section) else { return nil }
-            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HeaderView", for: indexPath) as! SectionHeaderView
+            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HeaderView", for: indexPath) as! MyPageSectionHeaderView
 
             switch section {
             case .reservedMovie:

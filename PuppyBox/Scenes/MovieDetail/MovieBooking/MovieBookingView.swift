@@ -24,7 +24,7 @@ enum MovieBookingItem: Hashable {
 
 // MARK: - Custom Header View
 
-final class SectionHeaderView: UICollectionReusableView {
+final class MovieBookingSectionHeaderView: UICollectionReusableView {
     static let reuseIdentifier = "SectionHeaderView"
     private let titleLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 18, weight: .bold)
@@ -221,7 +221,7 @@ final class MovieBookingView: UIView, UICollectionViewDelegate {
         }
 
         // HeaderRegistration
-        let headerRegistration = UICollectionView.SupplementaryRegistration<SectionHeaderView>(
+        let headerRegistration = UICollectionView.SupplementaryRegistration<MovieBookingSectionHeaderView>(
             elementKind: UICollectionView.elementKindSectionHeader
         ) { [weak self] header, _, indexPath in
             guard let section = self?.dataSource.snapshot().sectionIdentifiers[safe: indexPath.section] else {
