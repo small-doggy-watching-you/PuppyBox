@@ -178,6 +178,12 @@ extension MovieListViewController: UICollectionViewDataSource {
         cell.posterButton.accessibilityIdentifier = "\(indexPath.section)"
         cell.posterButton.addTarget(self, action: #selector(handlePosterButtonTap(_:)), for: .touchUpInside)
 
+        if indexPath.section == 0 {
+            cell.setNumber(indexPath.item + 1)
+        } else {
+            cell.setNumber(nil)
+        }
+
         return cell
     }
 
