@@ -8,7 +8,8 @@ struct UserData: Hashable {
     let email: String
     let profileImageUrl: String
     
-    let screeningDate: [MyMovie]
+    let reservedMovies: [MyMovie]
+    let seenMovies: [MyMovie]
     
 }
 

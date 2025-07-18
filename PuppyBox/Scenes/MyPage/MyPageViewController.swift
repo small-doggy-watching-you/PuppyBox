@@ -206,8 +206,8 @@ class MyPageViewController: UIViewController {
             profileImagePath: userData.profileImageUrl
         )
         
-        let reservedMovie = userData.screeningDate
-        let histories = userData.screeningDate
+        let reservedMovie = userData.reservedMovies
+        let histories = userData.seenMovies
         
         var snapShot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapShot.appendSections([.userInfo])
