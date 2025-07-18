@@ -5,7 +5,9 @@
 //  Created by 김우성 on 7/16/25.
 //
 
-import Alamofire
+import Kingfisher
+import SnapKit
+import Then
 import UIKit
 
 class MovieDetailViewController: UIViewController {
@@ -38,10 +40,8 @@ class MovieDetailViewController: UIViewController {
     private func bindViewModel() {
         viewModel.onStateChanged = { [weak self] state in
             guard let self = self, let movie = state.movie else { return }
-            DispatchQueue.main.async {
-                self.movieDetailView.configure(with: movie)
-                self.loadPosterImage(posterPath: movie.posterPath)
-            }
+            self.movieDetailView.configure(with: movie)
+            self.loadPosterImage(posterPath: movie.posterPath)
         }
     }
     
@@ -70,21 +70,13 @@ class MovieDetailViewController: UIViewController {
             return
         }
         
-        // Alamofire로 이미지 데이터 요청
-        AF.request(url, method: .get).responseData { [weak self] response in
-            switch response.result {
-            case .success(let data):
-                let image = UIImage(data: data)
-                DispatchQueue.main.async {
-                    self?.movieDetailView.setPosterImage(image)
-                }
-            case .failure(let error):
-                print("이미지 로드 실패: \(error)")
-                DispatchQueue.main.async {
-                    self?.movieDetailView.setPosterImage(nil)
-                }
-            }
-        }
+        // Kingfisher를 사용한 비동기 로딩
+        movieDetailView.setPosterImage(nil) // placeholder
+        let options: KingfisherOptionsInfo = [
+            .transition(.fade(0.1)), // 부드러운 페이드인
+            .cacheOriginalImage
+        ]
+        movieDetailView.kfSetPosterImage(with: url, options: options)
     }
     
     private func setupNavigationBar() {
@@ -92,7 +84,6 @@ class MovieDetailViewController: UIViewController {
         appearance.configureWithTransparentBackground()
         appearance.backgroundColor = .clear
         appearance.backgroundEffect = nil
-        
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
         navigationController?.navigationBar.tintColor = .white // 뒤로가기 버튼 색

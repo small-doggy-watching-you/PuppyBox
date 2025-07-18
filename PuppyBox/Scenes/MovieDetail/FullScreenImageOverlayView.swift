@@ -5,12 +5,11 @@
 //  Created by 김우성 on 7/18/25.
 //
 
-import UIKit
 import SnapKit
 import Then
+import UIKit
 
 final class FullScreenImageOverlayView: UIView, UIScrollViewDelegate, UIGestureRecognizerDelegate {
-
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
         $0.showsHorizontalScrollIndicator = false
@@ -151,9 +150,9 @@ final class FullScreenImageOverlayView: UIView, UIScrollViewDelegate, UIGestureR
                                initialSpringVelocity: 0.6,
                                options: [],
                                animations: {
-                    self.scrollView.transform = .identity
-                    self.backgroundColor = .black
-                })
+                                   self.scrollView.transform = .identity
+                                   self.backgroundColor = .black
+                               })
             }
         default:
             break
