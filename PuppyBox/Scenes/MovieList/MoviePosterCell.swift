@@ -18,10 +18,29 @@ final class MoviePosterCell: UICollectionViewCell {
         $0.backgroundColor = .systemGray5
     }
 
+    let numberLabel = UILabel().then {
+        $0.font = .boldSystemFont(ofSize: 48)
+        $0.textColor = .white
+        $0.textAlignment = .left
+        $0.isHidden = true
+
+        $0.layer.shadowColor = UIColor.black.cgColor
+        $0.layer.shadowOpacity = 1
+        $0.layer.shadowOffset = CGSize(width: 0, height: 4)
+        $0.layer.shadowRadius = 10
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.addSubview(posterButton)
+        contentView.addSubview(numberLabel)
+
         posterButton.snp.makeConstraints { $0.edges.equalToSuperview() }
+
+        numberLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(8)
+            $0.bottom.equalToSuperview().offset(-8)
+        }
     }
 
     @available(*, unavailable)
@@ -33,5 +52,14 @@ final class MoviePosterCell: UICollectionViewCell {
         guard let path = path else { return }
         let url = URL(string: "https://image.tmdb.org/t/p/original\(path)")
         posterButton.kf.setImage(with: url, for: .normal)
+    }
+
+    func setNumber(_ number: Int?) {
+        if let number {
+            numberLabel.text = "\(number)"
+            numberLabel.isHidden = false
+        } else {
+            numberLabel.isHidden = true
+        }
     }
 }
