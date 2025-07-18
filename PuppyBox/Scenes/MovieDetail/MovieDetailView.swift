@@ -5,6 +5,7 @@
 //  Created by 김우성 on 7/16/25.
 //
 
+import Kingfisher
 import SnapKit
 import Then
 import UIKit
@@ -17,6 +18,7 @@ class MovieDetailView: UIView {
     var posterImage: UIImage? {
         return posterImageView.image
     }
+
     private let movieInfoView = MovieInfoView()
     
     private let topGradientMaskView = UIView().then { // 이미지 상단 (최상단) 그라데이션
@@ -54,8 +56,8 @@ class MovieDetailView: UIView {
     private func configureUI() {
         backgroundColor = .black
         
-        [posterImageView, topGradientMaskView, gradientMaskView, blackBackgroundView].forEach {
-            addSubview($0)
+        for item in [posterImageView, topGradientMaskView, gradientMaskView, blackBackgroundView] {
+            addSubview(item)
         }
         
         topGradientMaskView.snp.makeConstraints {
@@ -135,5 +137,11 @@ class MovieDetailView: UIView {
         gradient.locations = [0.0, 1.0]
         gradient.frame = gradientMaskView.bounds
         gradientMaskView.layer.insertSublayer(gradient, at: 0)
+    }
+}
+
+extension MovieDetailView {
+    func kfSetPosterImage(with url: URL, options: KingfisherOptionsInfo? = nil) {
+        posterImageView.kf.setImage(with: url, placeholder: nil, options: options)
     }
 }

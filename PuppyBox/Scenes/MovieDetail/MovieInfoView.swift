@@ -155,7 +155,7 @@ class MovieInfoView: UIView {
         overviewLabel.text = movie.overview
         adultIconImageView.isHidden = !movie.adult
         
-        let genreNames = movie.genreIds.compactMap { genreMap[$0]}
+        let genreNames = movie.genreIds.compactMap { genreMap[$0] }
         let genreText = genreNames.joined(separator: ", ")
         metaInfoLabel.text = "\(movie.releaseDate) 개봉 | \(genreText)"
         
