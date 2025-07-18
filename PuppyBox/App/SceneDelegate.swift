@@ -14,11 +14,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
 
-        let navi = UINavigationController()
-        navi.setViewControllers([MovieListViewController()], animated: false)
+//        let navi = UINavigationController()
+//        navi.setViewControllers([MovieListViewController()], animated: false)
 //        navi.setViewControllers([LoginViewController()], animated: false)
 
-        window.rootViewController = navi
+        window.rootViewController = MainTabBarController()
+        // window.rootViewController = navi
         window.makeKeyAndVisible()
         self.window = window
     }

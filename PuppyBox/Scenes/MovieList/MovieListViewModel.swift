@@ -8,49 +8,71 @@
 import Foundation
 
 final class MovieListViewModel: ViewModelProtocol {
-    struct State {
-        var movieData: MovieData? = nil
+    enum Action {
+        case fetchAll
     }
 
-    private(set) var state: State {
+    struct State {
+        var movieChart: [MovieResults] = []
+        var nowPlaying: [MovieResults] = []
+        var upcoming: [MovieResults] = []
+    }
+
+    private(set) var state: State = .init() {
         didSet { onDataUpdated?(state) }
     }
 
     private let dataService = DataService()
     var onDataUpdated: ((State) -> Void)?
-    var pageNum = 1
 
-    init() {
-        state = State(
-            // movieData: nil,
-        )
-    }
-
-    enum Action {
-        case fetchData
-    }
+    init() {}
 
     func action(_ action: Action) {
         switch action {
-        case .fetchData:
-            fetchData()
+        case .fetchAll:
+            fetchAllData()
         }
     }
 
-    private func fetchData() {
-        dataService.fetchData(pageNum: pageNum) { [weak self] result in
-            guard let self else { return }
+    func fetchAllData() {
+        fetchMovieChart()
+        fetchNowPlaying()
+        fetchUpcoming()
+    }
 
+    private func fetchMovieChart() {
+        dataService.fetchData(endpoint: "popular") { [weak self] result in
+            guard let self else { return }
             switch result {
-            case .success(let moviedata):
-                self.state.movieData = moviedata
+            case .success(let data):
+                self.state.movieChart = data.results
             case .failure(let error):
-                print("Error: \(error)")
+                print("Error fetching popular: \(error)")
             }
         }
     }
 
-    private func updateMovieData(_ data: MovieData) {
-        state.movieData = data
+    private func fetchNowPlaying() {
+        dataService.fetchData(endpoint: "now_playing") { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(let data):
+                self.state.nowPlaying = data.results
+            case .failure(let error):
+                print("Error fetching now_playing: \(error)")
+            }
+        }
+    }
+
+    private func fetchUpcoming() {
+        dataService.fetchData(endpoint: "upcoming") { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(let data):
+                self.state.upcoming = data.results
+            case .failure(let error):
+                print("Error fetching upcoming: \(error)")
+            }
+        }
     }
 }
