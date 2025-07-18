@@ -5,9 +5,9 @@
 //  Created by 노가현 on 7/17/25.
 //
 
-import UIKit
 import SnapKit
 import Then
+import UIKit
 
 final class MovieSectionHeader: UICollectionReusableView {
     static let identifier = "MovieSectionHeader"
@@ -27,6 +27,7 @@ final class MovieSectionHeader: UICollectionReusableView {
         }
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

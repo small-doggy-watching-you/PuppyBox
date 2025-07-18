@@ -18,7 +18,7 @@ final class MovieListViewModel: ViewModelProtocol {
         var upcoming: [MovieResults] = []
     }
 
-    private(set) var state: State = State() {
+    private(set) var state: State = .init() {
         didSet { onDataUpdated?(state) }
     }
 
