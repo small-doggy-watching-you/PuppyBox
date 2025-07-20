@@ -11,6 +11,8 @@ import UIKit
 import Kingfisher
 
 class SearchViewController: UIViewController, UISearchBarDelegate, UICollectionViewDataSource {
+    private let viewModel = MovieListViewModel()
+
     private let searchBar = UISearchBar().then {
         $0.placeholder = "검색어를 입력하세요"
         $0.searchBarStyle = .minimal
@@ -31,6 +33,13 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UICollectionV
         setupLayout()
         setupCollectionViewLayout()
         searchBar.delegate = self
+
+        viewModel.onDataUpdated = { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.collectionView.reloadData()
+            }
+        }
+        viewModel.fetchAllData()
     }
 
     private func setupLayout() {
@@ -77,11 +86,13 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UICollectionV
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return viewModel.state.movieChart.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MoviePosterCell.identifier, for: indexPath) as! MoviePosterCell
+        let movie = viewModel.state.movieChart[indexPath.item]
+        cell.setImage(with: movie.posterPath)
         cell.setNumber(nil)
         return cell
     }
