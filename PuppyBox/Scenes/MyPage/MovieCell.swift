@@ -13,7 +13,7 @@ final class MovieCell: UICollectionViewCell {
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 8
     }
-    
+
     private let backgroundPosterView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.layer.cornerRadius = 8
@@ -39,23 +39,20 @@ final class MovieCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-       
-        
+
         stackView.addArrangedSubview(movieNameLabel)
         stackView.addArrangedSubview(dateLabel)
-        
+
         contentView.addSubview(backgroundPosterView)
         contentView.addSubview(moviePosterView)
         contentView.addSubview(stackView)
-        
+
         backgroundPosterView.snp.makeConstraints {
             $0.top.bottom.equalToSuperview().inset(8)
             $0.leading.equalToSuperview().inset(16)
             $0.width.height.equalTo(56)
         }
-        
-       
+
         moviePosterView.snp.makeConstraints {
             $0.directionalEdges.equalTo(backgroundPosterView)
         }
@@ -72,7 +69,6 @@ final class MovieCell: UICollectionViewCell {
     }
 
     func configure(with movie: MyMovie) {
-
         movieNameLabel.text = movie.movieName
         dateLabel.text = movie.screeningDate
         // Kf downloadImage
@@ -80,8 +76,5 @@ final class MovieCell: UICollectionViewCell {
             moviePosterView.kf.setImage(with: url)
             backgroundPosterView.kf.setImage(with: url)
         }
-
-      
-
     }
 }
