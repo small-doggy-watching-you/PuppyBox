@@ -7,7 +7,7 @@ struct UserDummyData {
             email: "exapmle@example.com",
             profileImageUrl: "defaultProfile",
             reservedMovies: dummyReservedMovies,
-            seenMovies: dummySeenMovies,
+            watchedMovies: dummySeenMovies,
         )
     }
     

@@ -64,12 +64,6 @@ class MyPageViewController: UIViewController {
         
         logoutButton.addAction(UIAction { [weak self] _ in
             guard self != nil else { return }
-            // 모달 방식
-            //            let loginVC = LoginViewController()
-            //            let navController = UINavigationController(rootViewController: loginVC)
-            //            navController.modalPresentationStyle = .fullScreen
-            //            present(navController, animated: true)
-            
             //신 딜리게이트 이동 방식
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let sceneDelegate = windowScene.delegate as? SceneDelegate {
@@ -158,7 +152,6 @@ class MyPageViewController: UIViewController {
                     let symbolConfig = UIImage.SymbolConfiguration(pointSize: 8, weight: .bold)
                     headerView.moreButton.configuration?.image = UIImage(systemName: "chevron.forward", withConfiguration: symbolConfig)
                 }
-//                headerView.moreButton.configuration?.title = self.isExpanded ? "접기" : "더보기"
             }
             return headerView
         }
@@ -233,7 +226,7 @@ class MyPageViewController: UIViewController {
         )
         
         let reservedMovie = userData.reservedMovies
-        let histories = userData.seenMovies
+        let histories = userData.watchedMovies
         
         var snapShot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapShot.appendSections([.userInfo])
