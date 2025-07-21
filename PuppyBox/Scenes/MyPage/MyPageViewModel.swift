@@ -17,9 +17,7 @@ final class MyPageViewModel: ViewModelProtocol {
     var onStateChanged: ((State) -> Void)?
 
     init() {
-        @UserSetting(key: UDKey.userId, defaultValue: "")
-        var userId: String
-        if let account = CoreDataManager.shared.fetchAccount(userId: userId) {
+        if let account = fetchCurrentUserAccount() {
             state = State(userData: updateUserData(from: account))
         } else {
             state = State(userData:
@@ -38,14 +36,21 @@ final class MyPageViewModel: ViewModelProtocol {
     func action(_ action: Action) {
         switch action {
         case .updateUserData:
-            @UserSetting(key: UDKey.userId, defaultValue: "")
-            var userId: String
-            let account = CoreDataManager.shared.fetchAccount(userId: userId)!
-            state = State(userData: updateUserData(from: account))
+            if let account = fetchCurrentUserAccount() {
+                state = State(userData: updateUserData(from: account))
+            }
         }
     }
 }
 
+// 현재 유저 정보 획득
+private func fetchCurrentUserAccount() -> Account? {
+    @UserSetting(key: UDKey.userId, defaultValue: "")
+    var userId: String
+    return CoreDataManager.shared.fetchAccount(userId: userId)
+}
+
+// 유저 정보객체에 업데이트
 private func updateUserData(from account: Account) -> UserData {
     let reservations: [MyMovie]
 
@@ -58,7 +63,7 @@ private func updateUserData(from account: Account) -> UserData {
                 screeningDate: DateFormat.dateToString($0.screeningDate),
             )
         }.sorted {
-            $0.screeningDate < $1.screeningDate
+            $0.screeningDate < $1.screeningDate // 예매정보는 오래된 순 (볼 순서 대로 배치)
         }
     } else {
         reservations = []
@@ -75,7 +80,7 @@ private func updateUserData(from account: Account) -> UserData {
                 screeningDate: DateFormat.dateToString($0.screeningDate),
             )
         }.sorted {
-            $0.screeningDate > $1.screeningDate
+            $0.screeningDate > $1.screeningDate // 관람기록은 최신순 (나중에 본 것이 최상단)
         }
     } else {
         watched = []
