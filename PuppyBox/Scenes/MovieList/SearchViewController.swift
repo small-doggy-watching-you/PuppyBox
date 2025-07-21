@@ -5,10 +5,10 @@
 //  Created by 노가현 on 7/16/25.
 //
 
+import Kingfisher
 import SnapKit
 import Then
 import UIKit
-import Kingfisher
 
 class SearchViewController: UIViewController, UISearchBarDelegate, UICollectionViewDataSource {
     private let viewModel = MovieListViewModel()
@@ -86,6 +86,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UICollectionV
         collectionView.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom).offset(16)
             $0.leading.trailing.bottom.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(8)
         }
     }
 
@@ -100,6 +101,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UICollectionV
         cell.setNumber(nil)
         return cell
     }
+
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         print("현재 검색어 :", searchText)
     }
