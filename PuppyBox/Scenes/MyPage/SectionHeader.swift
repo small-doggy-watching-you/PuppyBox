@@ -16,7 +16,7 @@ final class MyPageSectionHeaderView: UICollectionReusableView {
         $0.configuration?.image = UIImage(systemName: "chevron.forward", withConfiguration: symbolConfig)
         $0.configuration?.imagePadding = 4 // 텍스트와 아이콘 간 간격
         $0.semanticContentAttribute = .forceRightToLeft
-        $0.configuration?.baseForegroundColor = UIColor(red: 197 / 255, green: 197 / 255, blue: 197 / 255, alpha: 1.0)
+        $0.configuration?.baseForegroundColor = .appGray
         $0.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
             outgoing.font = .plusJakarta(size: 12, weight: .bold)
