@@ -43,8 +43,7 @@ class MyPageViewController: UIViewController {
     lazy var collectionViewDataSource = makeDataSource(collectionView)
     
     init() {
-        let dummy = UserDummyData()
-        viewModel = MyPageViewModel(userData: dummy.sampleUser)
+        viewModel = MyPageViewModel()
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -56,6 +55,7 @@ class MyPageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
+        viewModel.action(.fetchUserData)
         
         viewModel.onStateChanged = { [weak self] _ in
             guard let self else { return }

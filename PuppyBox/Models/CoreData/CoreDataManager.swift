@@ -51,7 +51,7 @@ final class CoreDataManager {
         admin.password = "admin123"
         admin.email = "admin@example.com"
         admin.phone = "010-0001-0001"
-        admin.profile = "AdminProfile"
+        admin.profile = "adminProfile"
         admin.isAdmin = true
 
         // 게스트 계정 생성
@@ -62,7 +62,7 @@ final class CoreDataManager {
         guest.password = "guest123"
         guest.email = "guest@example.com"
         guest.phone = "010-0001-0002"
-        guest.profile = "GuestProfile"
+        guest.profile = "defaultProfile"
         guest.isAdmin = false
 
         saveContext()

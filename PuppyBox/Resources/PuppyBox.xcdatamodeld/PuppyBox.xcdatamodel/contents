@@ -13,11 +13,11 @@
         <relationship name="watchedMovies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WatchedMovie" inverseName="owner" inverseEntity="WatchedMovie"/>
     </entity>
     <entity name="Reservation" representedClassName="Reservation" syncable="YES">
-        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="movieId" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="movieName" attributeType="String"/>
         <attribute name="posterImagePath" optional="YES" attributeType="String"/>
         <attribute name="screeningDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="userId" attributeType="String"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Account" inverseName="reservation" inverseEntity="Account"/>
     </entity>
     <entity name="WatchedMovie" representedClassName="WatchedMovie" syncable="YES">
