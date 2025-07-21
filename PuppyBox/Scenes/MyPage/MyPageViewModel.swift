@@ -53,13 +53,13 @@ private func fetchCurrentUserAccount() -> Account? {
 // 유저 정보객체에 업데이트
 private func updateUserData(from account: Account) -> UserData {
     let reservations: [MyMovie]
-
+    
     if let movies = account.reservation as? Set<Reservation> {
         reservations = movies.map {
             MyMovie(
                 movieId: Int($0.movieId),
                 movieName: $0.movieName,
-                posterImagePath: $0.posterImagePath ?? "",
+                posterImagePath: ImagePathService.makeImagePath(size: .w92, posterPath: $0.posterImagePath ?? ""),
                 screeningDate: DateFormat.dateToString($0.screeningDate),
             )
         }.sorted {
