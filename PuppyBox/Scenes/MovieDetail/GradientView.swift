@@ -8,72 +8,71 @@
 import UIKit
 
 final class GradientView: UIView {
-  private var gradientLayer: CAGradientLayer { layer as! CAGradientLayer }
+    private var gradientLayer: CAGradientLayer { layer as! CAGradientLayer }
 
-  override class var layerClass: AnyClass { CAGradientLayer.self }
+    override class var layerClass: AnyClass { CAGradientLayer.self }
 
-  @inlinable var style: GradientView.Style {
-    get { Style(rawValue: gradientLayer.type.rawValue) }
-    set { gradientLayer.type = CAGradientLayerType(rawValue: newValue.rawValue) }
-  }
-
-  @inlinable var colors: [UIColor]? {
-    get { gradientLayer.colors?.map { UIColor(cgColor: $0 as! CGColor) } }  // swiftlint:disable:this force_cast
-    set { gradientLayer.colors = newValue?.map(\.cgColor) }
-  }
-
-  @inlinable var locations: [Float]? {
-    get { gradientLayer.locations?.map { $0.floatValue } }
-    set { gradientLayer.locations = newValue?.map { NSNumber(value: $0) } }
-  }
-
-  @inlinable var startPoint: CGPoint {
-    get { gradientLayer.startPoint }
-    set { gradientLayer.startPoint = newValue }
-  }
-
-  @inlinable var endPoint: CGPoint {
-    get { gradientLayer.endPoint }
-    set { gradientLayer.endPoint = newValue }
-  }
-
-  convenience init(style: GradientView.Style? = nil, colors: [UIColor]? = nil, locations: [Float]? = nil, startPoint: CGPoint? = nil, endPoint: CGPoint? = nil) {
-    self.init(frame: .zero)
-    if let style {
-      self.style = style
+    @inlinable var style: GradientView.Style {
+        get { Style(rawValue: gradientLayer.type.rawValue) }
+        set { gradientLayer.type = CAGradientLayerType(rawValue: newValue.rawValue) }
     }
-    if let colors {
-      self.colors = colors
+
+    @inlinable var colors: [UIColor]? {
+        get { gradientLayer.colors?.map { UIColor(cgColor: $0 as! CGColor) } } // swiftlint:disable:this force_cast
+        set { gradientLayer.colors = newValue?.map(\.cgColor) }
     }
-    if let locations {
-      self.locations = locations
+
+    @inlinable var locations: [Float]? {
+        get { gradientLayer.locations?.map { $0.floatValue } }
+        set { gradientLayer.locations = newValue?.map { NSNumber(value: $0) } }
     }
-    if let startPoint {
-      self.startPoint = startPoint
+
+    @inlinable var startPoint: CGPoint {
+        get { gradientLayer.startPoint }
+        set { gradientLayer.startPoint = newValue }
     }
-    if let endPoint {
-      self.endPoint = endPoint
+
+    @inlinable var endPoint: CGPoint {
+        get { gradientLayer.endPoint }
+        set { gradientLayer.endPoint = newValue }
     }
-  }
+
+    convenience init(style: GradientView.Style? = nil, colors: [UIColor]? = nil, locations: [Float]? = nil, startPoint: CGPoint? = nil, endPoint: CGPoint? = nil) {
+        self.init(frame: .zero)
+        if let style {
+            self.style = style
+        }
+        if let colors {
+            self.colors = colors
+        }
+        if let locations {
+            self.locations = locations
+        }
+        if let startPoint {
+            self.startPoint = startPoint
+        }
+        if let endPoint {
+            self.endPoint = endPoint
+        }
+    }
 }
 
 // MARK: - GradientView.Style
 
 extension GradientView {
-  struct Style: RawRepresentable {
-    let rawValue: String
+    struct Style: RawRepresentable {
+        let rawValue: String
 
-    init(rawValue: String) {
-      self.rawValue = rawValue
+        init(rawValue: String) {
+            self.rawValue = rawValue
+        }
+
+        init(_ type: CAGradientLayerType) {
+            self.init(rawValue: type.rawValue)
+        }
+
+        static let axial = Style(.axial)
+        static let conic = Style(.conic)
+        static let radial = Style(.radial)
     }
-
-    init(_ type: CAGradientLayerType) {
-      self.init(rawValue: type.rawValue)
-    }
-
-    static let axial = Style(.axial)
-    static let conic = Style(.conic)
-    static let radial = Style(.radial)
-  }
 }
-

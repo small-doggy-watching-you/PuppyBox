@@ -7,9 +7,15 @@
 
 import UIKit
 
+// MARK: - 좌석 셀
+
 final class SeatCell: UICollectionViewCell {
+    // MARK: - UI
+
     private let label = UILabel()
-    
+
+    // MARK: - 초기화
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.addSubview(label)
@@ -19,8 +25,12 @@ final class SeatCell: UICollectionViewCell {
         contentView.layer.cornerRadius = 4
         contentView.clipsToBounds = true
     }
+
+    @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError() }
-    
+
+    // MARK: - 셀 구성
+
     func configure(with item: SeatItem) {
         switch item.state {
         case .empty:
