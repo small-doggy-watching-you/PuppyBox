@@ -35,7 +35,14 @@ class SearchViewController: UIViewController {
         $0.delegate = self
         $0.keyboardDismissMode = .onDrag
     }
-    
+
+    private let emptyLabel = UILabel().then {
+        $0.text = "검색 결과 없음"
+        $0.textAlignment = .center
+        $0.textColor = .secondaryLabel
+        $0.font = .systemFont(ofSize: 16, weight: .medium)
+    }
+
     // MARK: - Life Cycle
     
     override func viewDidLoad() {
@@ -50,6 +57,7 @@ class SearchViewController: UIViewController {
         viewModel.onDataUpdated = { [weak self] _ in
             DispatchQueue.main.async {
                 self?.collectionView.reloadData()
+                self?.updateEmptyState()
             }
         }
         viewModel.fetchAllData()
@@ -103,7 +111,15 @@ class SearchViewController: UIViewController {
         
         return UICollectionViewCompositionalLayout(section: section)
     }
-    
+
+    private func updateEmptyState() {
+        if viewModel.state.searchResults.isEmpty {
+            collectionView.backgroundView = emptyLabel
+        } else {
+            collectionView.backgroundView = nil
+        }
+    }
+
     private func setupCollectionViewLayout() {
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints {
