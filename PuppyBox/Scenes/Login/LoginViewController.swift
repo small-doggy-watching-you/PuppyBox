@@ -145,7 +145,7 @@ final class LoginViewController: UIViewController {
         let tapDismissKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapDismissKeyboard.cancelsTouchesInView = false
         view.addGestureRecognizer(tapDismissKeyboard)
-        
+
         print(signUpLabel.gestureRecognizers ?? [])
     }
 
@@ -237,7 +237,7 @@ final class LoginViewController: UIViewController {
         }
 
         joinStackView.snp.makeConstraints {
-            $0.top.equalTo(passwordTextField.snp.bottom).offset(24)
+            $0.top.equalTo(wrongPasswordLabel.snp.bottom).offset(24)
             $0.centerX.equalToSuperview()
         }
 
