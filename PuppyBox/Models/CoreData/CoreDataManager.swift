@@ -13,7 +13,7 @@ final class CoreDataManager {
     static let shared = CoreDataManager()
 
     // CoreData의 저장소(= 데이터베이스)를 앱에 로드함, 이 안에는 SQLite 백엔드가 자동으로 설정됨
-    lazy var persistentContainer: NSPersistentContainer = {
+    private lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "PuppyBox") // ← .xcdatamodeld 파일명
         container.loadPersistentStores { _, error in
             if let error = error {
@@ -121,7 +121,8 @@ final class CoreDataManager {
         // 일치하는 데이터 존재할 경우 false(생성불가)
         return false
     }
-
+    
+    // 회원 정보 추가
     func createUser(userId: String, name: String, password: String, email: String?, phone: String?) {
         let guest = Account(context: context)
         guest.id = UUID()
@@ -130,9 +131,43 @@ final class CoreDataManager {
         guest.password = password
         guest.email = email ?? ""
         guest.phone = phone ?? ""
-        guest.profile = nil
+        guest.profile = "defaultProfile"
         guest.isAdmin = false
 
         saveContext()
     }
+    
+    // 로그인 된 아이디의 정보 획득
+    func fetchAccount(userId: String) -> Account? {
+        let fetchRequest: NSFetchRequest<Account> = Account.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
+        fetchRequest.fetchLimit = 1
+
+        return try? context.fetch(fetchRequest).first
+    }
+
+    
+    // 영화 예약 추가
+    func addReservation(for account: Account, movieId: Int32, movieName: String, posterImagePath: String, screeningDate: Date) {
+        let reservation = Reservation(context: context)
+        reservation.movieId = movieId
+        reservation.movieName = movieName
+        reservation.posterImagePath = posterImagePath
+        reservation.screeningDate = screeningDate
+        reservation.userId = account.userId
+        reservation.user = account
+
+        saveContext()
+    }
+    
+    // 관람 기록 호출
+    func fetchWatchedMovies(for account: Account) -> [WatchedMovie] {
+        let fetchRequest: NSFetchRequest<WatchedMovie> = WatchedMovie.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "owner == %@", account)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "screeningDate", ascending: false)]
+
+        return (try? context.fetch(fetchRequest)) ?? []
+    }
+
+
 }

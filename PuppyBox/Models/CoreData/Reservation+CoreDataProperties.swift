@@ -16,11 +16,11 @@ extension Reservation {
         return NSFetchRequest<Reservation>(entityName: "Reservation")
     }
 
-    @NSManaged public var id: UUID?
+    @NSManaged public var userId: String
     @NSManaged public var movieId: Int32
-    @NSManaged public var movieName: String?
+    @NSManaged public var movieName: String
     @NSManaged public var posterImagePath: String?
-    @NSManaged public var screeningDate: Date?
+    @NSManaged public var screeningDate: Date
     @NSManaged public var user: Account?
 
 }
