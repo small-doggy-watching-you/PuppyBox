@@ -9,7 +9,11 @@ import SnapKit
 import Then
 import UIKit
 
+// MARK: - 영화 정보 뷰
+
 class MovieInfoView: UIView {
+    // MARK: - UI 요소
+
     private let titleLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 24, weight: .heavy)
         $0.textColor = .white
@@ -44,7 +48,6 @@ class MovieInfoView: UIView {
     private let overviewTitleLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16, weight: .semibold)
         $0.textColor = .white
-        $0.numberOfLines = 1
         $0.textAlignment = .left
         $0.text = "줄거리"
     }
@@ -56,16 +59,20 @@ class MovieInfoView: UIView {
         $0.textAlignment = .natural
     }
     
+    // MARK: - 초기화
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureUI()
     }
-    
+
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - UI 세팅
+
     private func configureUI() {
         for item in [titleLabel, adultIconImageView, metaInfoLabel, metaDetailStackView, separatorView, overviewTitleLabel, overviewLabel] {
             addSubview(item)
@@ -110,6 +117,8 @@ class MovieInfoView: UIView {
         }
     }
     
+    // MARK: - 메타데이터 구성
+
     private func setupMetaDetailContent(symbol: String, title: String, value: String) -> UIStackView {
         let hStackView = UIStackView().then {
             $0.axis = .horizontal
@@ -131,16 +140,12 @@ class MovieInfoView: UIView {
         let titleLabel = UILabel().then {
             $0.font = .systemFont(ofSize: 8, weight: .bold)
             $0.textColor = .systemGray2
-            $0.numberOfLines = 1
-            $0.textAlignment = .left
             $0.text = title
         }
         
         let valueLabel = UILabel().then {
             $0.font = .systemFont(ofSize: 8, weight: .regular)
             $0.textColor = .white
-            $0.numberOfLines = 1
-            $0.textAlignment = .left
             $0.text = value
         }
         
@@ -150,6 +155,8 @@ class MovieInfoView: UIView {
         return hStackView
     }
     
+    // MARK: - 외부 설정
+
     func configure(with movie: MovieResults) {
         titleLabel.text = movie.title
         overviewLabel.text = movie.overview
@@ -166,7 +173,7 @@ class MovieInfoView: UIView {
         [
             setupMetaDetailContent(symbol: "globe", title: "언어", value: movie.originalLanguage.uppercased()),
             setupMetaDetailContent(symbol: "star.leadinghalf.filled", title: "평점", value: String(format: "%.1f", movie.voteAverage)),
-            setupMetaDetailContent(symbol: "chart.line.uptrend.xyaxis", title: "인기도", value: String(format: "%.2f", movie.popularity)),
+            setupMetaDetailContent(symbol: "chart.line.uptrend.xyaxis", title: "인기도", value: String(format: "%.2f", movie.popularity))
         ].forEach { metaDetailStackView.addArrangedSubview($0) }
     }
 }

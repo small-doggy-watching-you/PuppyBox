@@ -10,13 +10,26 @@ import SnapKit
 import Then
 import UIKit
 
+// MARK: - 영화 상세 화면 컨트롤러
+
 class MovieDetailViewController: UIViewController {
+    // MARK: - 프로퍼티
+
     private let movieDetailView = MovieDetailView()
     private let viewModel: MovieDetailViewModel
     
+    private let topGradientMaskView = GradientView().then {
+        $0.colors = [UIColor.black, UIColor.clear]
+        $0.locations = [0.0, 1.0]
+        $0.isUserInteractionEnabled = false
+    }
+    
+    // MARK: - 초기화
+
     init(movie: MovieResults) {
         self.viewModel = MovieDetailViewModel(movie: movie)
         super.init(nibName: nil, bundle: nil)
+        hidesBottomBarWhenPushed = true // push 시 하단 탭바 숨김
     }
     
     @available(*, unavailable)
@@ -24,6 +37,8 @@ class MovieDetailViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - 라이프사이클
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -32,11 +47,41 @@ class MovieDetailViewController: UIViewController {
         bindActions()
     }
     
-    private func setupView() {
-        view.addSubview(movieDetailView)
-        movieDetailView.snp.makeConstraints { $0.edges.equalToSuperview() }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        // 필요 시 네비게이션 바 관련 처리
     }
     
+    // MARK: - UI 세팅
+
+    private func setupView() {
+        view.addSubview(movieDetailView)
+        view.addSubview(topGradientMaskView)
+        
+        movieDetailView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        
+        topGradientMaskView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+            $0.height.equalTo(100)
+        }
+    }
+    
+    // MARK: - 네비게이션 바 세팅
+
+    private func setupNavigationBar() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .clear
+        appearance.backgroundEffect = nil
+        navigationItem.standardAppearance = appearance
+        navigationItem.scrollEdgeAppearance = appearance
+        navigationItem.backButtonDisplayMode = .minimal // 뒤로가기 텍스트 제거
+        navigationController?.navigationBar.tintColor = .white // 뒤로가기 버튼 색상
+        navigationItem.largeTitleDisplayMode = .never
+    }
+    
+    // MARK: - ViewModel 바인딩
+
     private func bindViewModel() {
         viewModel.onStateChanged = { [weak self] state in
             guard let self = self, let movie = state.movie else { return }
@@ -45,6 +90,8 @@ class MovieDetailViewController: UIViewController {
         }
     }
     
+    // MARK: - 액션 바인딩
+
     private func bindActions() {
         movieDetailView.onPosterTapped = { [weak self] in
             guard let self = self else { return }
@@ -52,47 +99,58 @@ class MovieDetailViewController: UIViewController {
                 await self.presentFullScreenImage()
             }
         }
+        
+        movieDetailView.movieBookingView.onSelectSeat = { [weak self] date, time, adult, child in
+            guard let self = self else { return }
+            guard let movie = self.viewModel.state.movie else { return }
+            
+            // SeatSelection으로 이동
+            let seatVC = SeatSelectionViewController(
+                movie: movie,
+                selectedDate: date,
+                selectedTime: time,
+                adultCount: adult,
+                childCount: child
+            )
+            self.navigationController?.pushViewController(seatVC, animated: true)
+        }
     }
     
+    // MARK: - 외부에서 영화 정보 전달
+
     func configure(with movie: MovieResults) {
         viewModel.action(.configure(movie))
     }
     
+    // MARK: - 포스터 이미지 로딩
+
     private func loadPosterImage(posterPath: String?) {
         guard let posterPath = posterPath else {
             movieDetailView.setPosterImage(nil)
             return
         }
-        
         let urlString = ImagePathService.makeImagePath(size: ImageSize.w780.rawValue, posterPath: posterPath)
         guard let url = URL(string: urlString) else {
             movieDetailView.setPosterImage(nil)
             return
         }
         
-        // Kingfisher를 사용한 비동기 로딩
         movieDetailView.setPosterImage(nil) // placeholder
         let options: KingfisherOptionsInfo = [
-            .transition(.fade(0.1)), // 부드러운 페이드인
+            .transition(.fade(0.1)),
             .cacheOriginalImage
         ]
         movieDetailView.kfSetPosterImage(with: url, options: options)
     }
     
-    private func setupNavigationBar() {
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = .clear
-        appearance.backgroundEffect = nil
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
-        navigationController?.navigationBar.tintColor = .white // 뒤로가기 버튼 색
-    }
-    
+    // MARK: - 상태바 스타일
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent // 상태바(시간, 배터리) 흰색
+        return .lightContent
     }
 }
+
+// MARK: - 풀스크린 이미지 표시
 
 extension MovieDetailViewController {
     @MainActor
@@ -105,10 +163,4 @@ extension MovieDetailViewController {
         view.addSubview(overlay)
         overlay.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
-}
-
-// #Preview로 보기
-@available(iOS 17.0, *)
-#Preview {
-    MovieDetailViewController(movie: MovieResults(adult: false, backdropPath: "/nKyBbFSooRPTJVqjrDteD1lF733.jpg", genreIds: [28, 12, 18], id: 1011477, originalLanguage: "en", originalTitle: "Karate Kid: Legends", overview: "서로 다른 세대의 스승 미스터 한(성룡)과 다니엘 라루소(랄프 마치오)가 소년 '리'를 중심으로 힘을 합치며 펼쳐지는 무술 성장 드라마. 과거의 철학과 기술을 계승한 두 사부는 삶의 벽에 부딪힌 리에게 가라데의 진정한 의미를 전하며 함께 성장한다.", popularity: 750.3586, posterPath: "/AEgggzRr1vZCLY86MAp93li43z.jpg", releaseDate: "2025-05-08", title: "가라데 키드: 레전드", video: false, voteAverage: 7.314, voteCount: 388))
 }

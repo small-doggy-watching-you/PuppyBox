@@ -8,11 +8,15 @@
 import SnapKit
 import UIKit
 
+// MARK: - 날짜 셀
+
 final class DateCell: UICollectionViewCell {
     static let reuseIdentifier = "DateCell"
 
     private let label = UILabel()
     private var currentDate: Date?
+
+    // MARK: - 초기화
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -27,6 +31,8 @@ final class DateCell: UICollectionViewCell {
 
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+
+    // MARK: - 셀 구성
 
     func configure(date: Date) {
         currentDate = date
@@ -44,13 +50,14 @@ final class DateCell: UICollectionViewCell {
             let formatter = DateCell.formatter
             label.text = formatter.string(from: date)
         }
-
         updateAppearance()
     }
 
     override var isSelected: Bool {
         didSet { updateAppearance() }
     }
+
+    // MARK: - 선택상태에 따른 UI
 
     private func updateAppearance() {
         if isSelected {
@@ -68,6 +75,8 @@ final class DateCell: UICollectionViewCell {
             }
         }
     }
+
+    // MARK: - 날짜 포맷터
 
     private static let formatter: DateFormatter = {
         let f = DateFormatter()

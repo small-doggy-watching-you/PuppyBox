@@ -9,11 +9,15 @@ import SnapKit
 import Then
 import UIKit
 
+// MARK: - 섹션 구분용 열거형
+
 enum MovieBookingSection: Hashable {
     case dateSelection
     case timeSelection
     case ticketQuantity
 }
+
+// MARK: - 아이템 구분용 열거형
 
 enum MovieBookingItem: Hashable {
     case date(Date)
@@ -22,10 +26,10 @@ enum MovieBookingItem: Hashable {
     case ticketChild(Int)
 }
 
-// MARK: - Custom Header View
+// MARK: - 커스텀 헤더뷰
 
 final class MovieBookingSectionHeaderView: UICollectionReusableView {
-    static let reuseIdentifier = "SectionHeaderView"
+    static let reuseIdentifier = "MovieBookingSectionHeaderView"
     private let titleLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 18, weight: .bold)
         $0.textColor = .label
@@ -50,12 +54,14 @@ final class MovieBookingSectionHeaderView: UICollectionReusableView {
     }
 }
 
+// MARK: - 예매 뷰 (상태를 직접 관리)
+
 final class MovieBookingView: UIView, UICollectionViewDelegate {
-    // MARK: - Public callback
+    // MARK: - 외부로 전달할 콜백
 
     var onSelectSeat: ((Date?, String?, Int, Int) -> Void)?
 
-    // MARK: - UI
+    // MARK: - UI 요소
 
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
     private lazy var dataSource = makeDataSource()
@@ -64,9 +70,11 @@ final class MovieBookingView: UIView, UICollectionViewDelegate {
         $0.backgroundColor = .systemRed
         $0.tintColor = .white
         $0.layer.cornerRadius = 8
+        $0.isEnabled = false
+        $0.alpha = 0.5
     }
 
-    // MARK: - Data
+    // MARK: - 데이터
 
     private var dateItems: [Date] = {
         let today = Date()
@@ -77,15 +85,13 @@ final class MovieBookingView: UIView, UICollectionViewDelegate {
 
     private var selectedAdultCount = 0
     private var selectedChildCount = 0
-
-    private var selectedDateIndexPath: IndexPath?
+    private var selectedDateIndexPath: IndexPath? = IndexPath(item: 0, section: 0)
     private var selectedTimeIndexPath: IndexPath?
 
-    // MARK: - Init
+    // MARK: - 초기화
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        selectedDateIndexPath = IndexPath(item: 0, section: 0)
         setupUI()
         applySnapshot()
     }
@@ -93,9 +99,10 @@ final class MovieBookingView: UIView, UICollectionViewDelegate {
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
+    // MARK: - UI 세팅
+
     private func setupUI() {
         backgroundColor = .white
-
         addSubview(collectionView)
         addSubview(footerButton)
 
@@ -114,14 +121,15 @@ final class MovieBookingView: UIView, UICollectionViewDelegate {
         footerButton.addTarget(self, action: #selector(selectSeatTapped), for: .touchUpInside)
     }
 
-    // MARK: - Snapshot
+    // MARK: - 스냅샷 갱신
 
     private func applySnapshot() {
         var snapshot = NSDiffableDataSourceSnapshot<MovieBookingSection, MovieBookingItem>()
         snapshot.appendSections([.dateSelection, .timeSelection, .ticketQuantity])
         snapshot.appendItems(dateItems.map { .date($0) }, toSection: .dateSelection)
         snapshot.appendItems(timeItems.map { .time($0) }, toSection: .timeSelection)
-        snapshot.appendItems([.ticketAdult(selectedAdultCount), .ticketChild(selectedChildCount)], toSection: .ticketQuantity)
+        snapshot.appendItems([.ticketAdult(selectedAdultCount), .ticketChild(selectedChildCount)],
+                             toSection: .ticketQuantity)
 
         dataSource.apply(snapshot, animatingDifferences: true) { [weak self] in
             guard let self else { return }
@@ -132,44 +140,52 @@ final class MovieBookingView: UIView, UICollectionViewDelegate {
                 self.collectionView.selectItem(at: timeIndex, animated: false, scrollPosition: [])
             }
         }
+
+        // 버튼 활성화 여부 갱신
+        updateFooterButtonState()
     }
 
-    // MARK: - Layout
+    // MARK: - 레이아웃
 
     private func makeLayout() -> UICollectionViewLayout {
         UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ in
-            guard let self, let section = self.dataSource.snapshot().sectionIdentifiers[safe: sectionIndex] else { return nil }
+            guard let section = self?.dataSource.sectionIdentifier(for: sectionIndex) else {
+                return nil
+            }
+
             switch section {
             case .dateSelection:
                 let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(50), heightDimension: .absolute(60))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: itemSize, subitems: [item])
-                let section = NSCollectionLayoutSection(group: group)
-                section.orthogonalScrollingBehavior = .continuous
-                section.interGroupSpacing = 8
-                section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
-                return section
+                let sectionLayout = NSCollectionLayoutSection(group: group)
+                sectionLayout.orthogonalScrollingBehavior = .continuous
+                sectionLayout.interGroupSpacing = 8
+                sectionLayout.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
+                return sectionLayout
+
             case .timeSelection:
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.3), heightDimension: .absolute(40))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(45))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 group.interItemSpacing = .fixed(8)
-                let section = NSCollectionLayoutSection(group: group)
-                section.interGroupSpacing = 8
-                section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 16, trailing: 16)
-                section.boundarySupplementaryItems = [self.makeHeaderItem()]
-                return section
+
+                let sectionLayout = NSCollectionLayoutSection(group: group)
+                sectionLayout.interGroupSpacing = 8
+                sectionLayout.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 16, trailing: 16)
+                sectionLayout.boundarySupplementaryItems = [self?.makeHeaderItem()].compactMap { $0 }
+                return sectionLayout
+
             case .ticketQuantity:
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(60))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(120))
                 let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-                let section = NSCollectionLayoutSection(group: group)
-                section.interGroupSpacing = 8
-                section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16)
-                section.boundarySupplementaryItems = [self.makeHeaderItem()]
-                return section
+                let sectionLayout = NSCollectionLayoutSection(group: group)
+                sectionLayout.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16)
+                sectionLayout.boundarySupplementaryItems = [self?.makeHeaderItem()].compactMap { $0 }
+                return sectionLayout
             }
         }
     }
@@ -182,10 +198,9 @@ final class MovieBookingView: UIView, UICollectionViewDelegate {
         )
     }
 
-    // MARK: - DataSource
+    // MARK: - Diffable DataSource
 
     private func makeDataSource() -> UICollectionViewDiffableDataSource<MovieBookingSection, MovieBookingItem> {
-        // CellRegistrations
         let dateCellRegistration = UICollectionView.CellRegistration<DateCell, Date> { cell, _, date in
             cell.configure(date: date)
         }
@@ -220,11 +235,10 @@ final class MovieBookingView: UIView, UICollectionViewDelegate {
             }
         }
 
-        // HeaderRegistration
         let headerRegistration = UICollectionView.SupplementaryRegistration<MovieBookingSectionHeaderView>(
             elementKind: UICollectionView.elementKindSectionHeader
         ) { [weak self] header, _, indexPath in
-            guard let section = self?.dataSource.snapshot().sectionIdentifiers[safe: indexPath.section] else {
+            guard let section = self?.dataSource.sectionIdentifier(for: indexPath.section) else {
                 header.configure(title: nil)
                 return
             }
@@ -244,27 +258,51 @@ final class MovieBookingView: UIView, UICollectionViewDelegate {
         return dataSource
     }
 
-    // MARK: - UICollectionViewDelegate
+    // MARK: - 셀 선택
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let section = dataSource.snapshot().sectionIdentifiers[indexPath.section]
-        switch section {
-        case .dateSelection:
-            if let prev = selectedDateIndexPath, prev != indexPath {
-                collectionView.deselectItem(at: prev, animated: false)
+        if let section = dataSource.sectionIdentifier(for: indexPath.section) {
+            switch section {
+            case .dateSelection:
+                if let prev = selectedDateIndexPath, prev != indexPath {
+                    collectionView.deselectItem(at: prev, animated: false)
+                }
+                selectedDateIndexPath = indexPath
+            case .timeSelection:
+                if let prev = selectedTimeIndexPath, prev != indexPath {
+                    collectionView.deselectItem(at: prev, animated: false)
+                }
+                selectedTimeIndexPath = indexPath
+            default: break
             }
-            selectedDateIndexPath = indexPath
-        case .timeSelection:
-            if let prev = selectedTimeIndexPath, prev != indexPath {
-                collectionView.deselectItem(at: prev, animated: false)
-            }
-            selectedTimeIndexPath = indexPath
-        default: break
         }
         collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+        updateFooterButtonState()
     }
 
-    // MARK: - Button Action
+    func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
+        let section = dataSource.sectionIdentifier(for: indexPath.section)
+        switch section {
+        case .dateSelection, .timeSelection: // 날짜와 시간은 선택 해제되지 않도록 막음
+            return false
+        default:
+            return true
+        }
+    }
+
+    // MARK: - 버튼 상태 업데이트
+
+    private func updateFooterButtonState() {
+        let hasDate = (selectedDateIndexPath != nil)
+        let hasTime = (selectedTimeIndexPath != nil)
+        let hasPeople = (selectedAdultCount + selectedChildCount > 0)
+        let canProceed = hasDate && hasTime && hasPeople
+
+        footerButton.isEnabled = canProceed
+        footerButton.alpha = canProceed ? 1.0 : 0.5
+    }
+
+    // MARK: - 버튼 액션
 
     @objc private func selectSeatTapped() {
         let selectedDate: Date? = selectedDateIndexPath.flatMap { dateItems[$0.item] }
@@ -273,15 +311,10 @@ final class MovieBookingView: UIView, UICollectionViewDelegate {
     }
 }
 
-// MARK: - Safe array access
+// MARK: - 배열 안전 접근
 
 extension Array {
     subscript(safe index: Int) -> Element? {
         return indices.contains(index) ? self[index] : nil
     }
-}
-
-@available(iOS 17.0, *)
-#Preview {
-    MovieBookingView()
 }

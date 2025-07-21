@@ -9,7 +9,11 @@ import SnapKit
 import Then
 import UIKit
 
+// MARK: - 전체화면 이미지 오버레이 뷰
+
 final class FullScreenImageOverlayView: UIView, UIScrollViewDelegate, UIGestureRecognizerDelegate {
+    // MARK: - UI
+
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
         $0.showsHorizontalScrollIndicator = false
@@ -18,12 +22,12 @@ final class FullScreenImageOverlayView: UIView, UIScrollViewDelegate, UIGestureR
         $0.maximumZoomScale = 2.0
         $0.backgroundColor = .clear
     }
-    
+
     private let imageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
         $0.isUserInteractionEnabled = true
     }
-    
+
     private let closeButton = UIButton(type: .system).then {
         $0.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
         $0.tintColor = .white
@@ -33,6 +37,8 @@ final class FullScreenImageOverlayView: UIView, UIScrollViewDelegate, UIGestureR
     }
     
     private var dismissHandler: (() -> Void)?
+    
+    // MARK: - 초기화
 
     init(image: UIImage, dismissHandler: @escaping () -> Void) {
         super.init(frame: .zero)
@@ -40,15 +46,14 @@ final class FullScreenImageOverlayView: UIView, UIScrollViewDelegate, UIGestureR
         configureUI(image: image)
         setupGestures()
     }
-    
+
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError()
-    }
+    required init?(coder: NSCoder) { fatalError() }
     
+    // MARK: - UI 세팅
+
     private func configureUI(image: UIImage) {
         backgroundColor = .black
-        
         addSubview(scrollView)
         addSubview(closeButton)
         scrollView.addSubview(imageView)
@@ -64,6 +69,8 @@ final class FullScreenImageOverlayView: UIView, UIScrollViewDelegate, UIGestureR
         imageView.image = image
     }
     
+    // MARK: - 레이아웃
+
     override func layoutSubviews() {
         super.layoutSubviews()
         guard let image = imageView.image else { return }
@@ -83,7 +90,7 @@ final class FullScreenImageOverlayView: UIView, UIScrollViewDelegate, UIGestureR
         scrollView.minimumZoomScale = minScale
         scrollView.zoomScale = minScale
     }
-    
+
     private func centerImage() {
         let scrollViewSize = scrollView.bounds.size
         let imageViewSize = imageView.frame.size
@@ -92,26 +99,30 @@ final class FullScreenImageOverlayView: UIView, UIScrollViewDelegate, UIGestureR
         scrollView.contentInset = UIEdgeInsets(top: verticalInset, left: horizontalInset, bottom: verticalInset, right: horizontalInset)
     }
     
+    // MARK: - UIScrollViewDelegate
+
     func viewForZooming(in scrollView: UIScrollView) -> UIView? { imageView }
     func scrollViewDidZoom(_ scrollView: UIScrollView) { centerImage() }
     
+    // MARK: - 제스처 세팅
+
     private func setupGestures() {
         closeButton.addTarget(self, action: #selector(dismissSelf), for: .touchUpInside)
-        
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
         doubleTap.numberOfTapsRequired = 2
         scrollView.addGestureRecognizer(doubleTap)
-        
         let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
         pan.delegate = self
         addGestureRecognizer(pan)
     }
     
+    // MARK: - 닫기 / 제스처 액션
+
     @objc private func dismissSelf() {
         removeFromSuperview()
         dismissHandler?()
     }
-    
+
     @objc private func handleDoubleTap(_ gesture: UITapGestureRecognizer) {
         let pointInView = gesture.location(in: imageView)
         if scrollView.zoomScale == scrollView.minimumZoomScale {
@@ -124,7 +135,7 @@ final class FullScreenImageOverlayView: UIView, UIScrollViewDelegate, UIGestureR
             scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
         }
     }
-    
+
     @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {
         let translation = gesture.translation(in: self)
         let progress = min(max(abs(translation.y) / bounds.height, 0), 1)
