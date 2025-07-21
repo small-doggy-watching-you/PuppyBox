@@ -8,6 +8,7 @@
 import SnapKit
 import Then
 import UIKit
+import CoreData
 
 // MARK: - 좌석 상태
 
@@ -136,8 +137,30 @@ final class SeatSelectionViewController: UIViewController {
 
     @objc private func payButtonTapped() {
         let totalPrice = viewModel.state.totalPrice
+        
         let alert = AlertFactory.paymentConfirmAlert(totalPrice: totalPrice) { [weak self] in
             guard let self = self else { return }
+            
+            @UserSetting(key: UDKey.userId, defaultValue: "")
+            var userId: String
+            
+            guard let account = CoreDataManager.shared.fetchAccount(userId: userId) else { return }
+            
+            let movie = self.viewModel.movieInfo
+            let selectedDate = self.viewModel.dateInfo
+            let selectedTime = self.viewModel.timeInfo
+            
+            if let screeningDate = makeScreeningDate(selectedDate: selectedDate, selectedTime: selectedTime) {
+                
+                CoreDataManager.shared.addReservation(
+                    for: account,
+                    movieId: Int32(movie.id),
+                    movieName: movie.title,
+                    posterImagePath: movie.posterPath ?? "",
+                    screeningDate: screeningDate
+                )
+            }
+            
             let ticketVC = TicketViewController(
                 movie: self.viewModel.movieInfo,
                 seats: self.viewModel.selectedSeatsArray,
@@ -147,6 +170,31 @@ final class SeatSelectionViewController: UIViewController {
             self.navigationController?.pushViewController(ticketVC, animated: true)
         }
         present(alert, animated: true)
+    }
+    
+    func makeScreeningDate(selectedDate: Date?, selectedTime: String?) -> Date? {
+        guard let selectedDate = selectedDate,
+              let selectedTime = selectedTime else {
+            return nil
+        }
+        
+        // 1. selectedDate를 "yyyy-MM-dd"로 변환 (한국 시간대)
+        let dayFormatter = DateFormatter()
+        dayFormatter.dateFormat = "yyyy-MM-dd"
+        dayFormatter.locale = Locale(identifier: "ko_KR")
+        dayFormatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        let datePart = dayFormatter.string(from: selectedDate) // 예: "2025-07-21"
+        
+        // 2. 날짜와 timeString을 합치기
+        // selectedTime이 "1:00 PM"처럼 AM/PM 형태라고 가정
+        let combinedString = "\(datePart) \(selectedTime)" // "2025-07-21 1:00 PM"
+        
+        // 3. 최종 파싱
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd h:mm a" // h:mm a -> 12시간제
+        formatter.locale = Locale(identifier: "en_US_POSIX") // AM/PM 파싱 안정화
+        formatter.timeZone = TimeZone(identifier: "Asia/Seoul") // 한국 시간대
+        return formatter.date(from: combinedString)
     }
 }
 
