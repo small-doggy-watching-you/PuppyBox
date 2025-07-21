@@ -109,7 +109,7 @@ class SearchViewController: UIViewController {
         collectionView.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(8)
+            $0.bottom.equalToSuperview()
         }
     }
     
