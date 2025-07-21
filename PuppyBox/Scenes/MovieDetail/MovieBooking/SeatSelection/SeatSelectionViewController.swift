@@ -191,7 +191,7 @@ final class SeatSelectionViewController: UIViewController {
         return UICollectionViewCompositionalLayout { sectionIndex, _ in
             let itemSize = NSCollectionLayoutSize(
                 widthDimension: .absolute(40),
-                heightDimension: .absolute(30)
+                heightDimension: .absolute(40)
             )
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
             item.contentInsets = NSDirectionalEdgeInsets(top: 2, leading: 2, bottom: 2, trailing: 2)
@@ -221,7 +221,7 @@ final class SeatSelectionViewController: UIViewController {
             verticalGroup.interItemSpacing = .fixed(4)
             
             let section = NSCollectionLayoutSection(group: verticalGroup)
-            section.orthogonalScrollingBehavior = .continuous // 👉 가로 스크롤
+            section.orthogonalScrollingBehavior = .continuous // 가로 스크롤
             section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
             
             return section
@@ -233,7 +233,7 @@ final class SeatSelectionViewController: UIViewController {
         seatItems = []
         let rows = 14
         let cols = 18
-        let reservedSeats: Set<String> = ["A01","A02","B05","C07","F12","M09"]
+        let reservedSeats: Set<String> = Set((65...78).flatMap { l in (1...18).map { "\(String(UnicodeScalar(l)!))\(String(format: "%02d", $0))" } }.shuffled().prefix(Int.random(in: 0...70))) // 예약된 좌석 : A~N + 01~18 조합 후 섞고, 앞에서부터 0~70개 뽑기
         
         for r in 0..<rows {
             let rowChar = Character(UnicodeScalar(65 + r)!) // A,B,C…
