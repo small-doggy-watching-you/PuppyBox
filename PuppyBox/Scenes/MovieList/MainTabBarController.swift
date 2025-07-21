@@ -32,7 +32,7 @@ class MainTabBarController: UITabBarController {
             image: UIImage(systemName: "magnifyingglass"),
             selectedImage: UIImage(systemName: "magnifyingglass.fill")
         )
-        searchNav.isNavigationBarHidden = true
+        //searchNav.isNavigationBarHidden = true
 
         let myPageVC = MyPageViewController()
         myPageVC.title = "마이페이지"
