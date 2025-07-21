@@ -67,7 +67,7 @@ final class MovieBookingView: UIView, UICollectionViewDelegate {
     private lazy var dataSource = makeDataSource()
     private let footerButton = UIButton().then {
         $0.setTitle("좌석 선택", for: .normal)
-        $0.backgroundColor = .systemRed
+        $0.backgroundColor = .appPrimary
         $0.tintColor = .white
         $0.layer.cornerRadius = 8
         $0.isEnabled = false
@@ -199,7 +199,6 @@ final class MovieBookingView: UIView, UICollectionViewDelegate {
     }
 
     // MARK: - Diffable DataSource
-
     private func makeDataSource() -> UICollectionViewDiffableDataSource<MovieBookingSection, MovieBookingItem> {
         let dateCellRegistration = UICollectionView.CellRegistration<DateCell, Date> { cell, _, date in
             cell.configure(date: date)
