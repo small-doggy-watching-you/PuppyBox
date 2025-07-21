@@ -10,7 +10,11 @@ import SnapKit
 import Then
 import UIKit
 
+// MARK: - SearchViewController
+
 class SearchViewController: UIViewController {
+    // MARK: - Properties
+
     private let viewModel = MovieListViewModel()
 
     private var movies: [MovieResults] {
@@ -42,9 +46,11 @@ class SearchViewController: UIViewController {
         $0.keyboardDismissMode = .onDrag
     }
 
+    // MARK: - Life Cycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.backButtonDisplayMode = .minimal
+        navigationItem.backButtonDisplayMode = .minimal // 뒤로가기 버튼 텍스트 제거
         view.backgroundColor = .white
         setupLayout()
         setupCollectionViewLayout()
@@ -55,17 +61,12 @@ class SearchViewController: UIViewController {
                 self?.collectionView.reloadData()
             }
         }
-        collectionView.delegate = self
         viewModel.fetchAllData()
     }
 
-    @objc private func handlePosterButtonTap(_ sender: UIButton) {
-        let idx = sender.tag
-        let movie = isFiltering ? searchResults[idx] : movies[idx]
-        let detailVC = MovieDetailViewController(movie: movie)
-        navigationController?.pushViewController(detailVC, animated: true)
-    }
+    // MARK: - Layout
 
+    // 서치바, 컬렉션뷰의 레이아웃 설정
     private func setupLayout() {
         view.addSubview(searchBar)
         searchBar.snp.makeConstraints {
@@ -108,6 +109,16 @@ class SearchViewController: UIViewController {
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(8)
         }
     }
+
+    // MARK: - Actions
+
+    // 포스터 버튼 탭 시 상세 화면으로 이동
+    @objc private func handlePosterButtonTap(_ sender: UIButton) {
+        let idx = sender.tag
+        let movie = isFiltering ? searchResults[idx] : movies[idx]
+        let detailVC = MovieDetailViewController(movie: movie)
+        navigationController?.pushViewController(detailVC, animated: true)
+    }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -123,13 +134,9 @@ extension SearchViewController: UICollectionViewDataSource {
             for: indexPath
         ) as! MoviePosterCell
 
-        let movie = isFiltering
-            ? searchResults[indexPath.item]
-            : movies[indexPath.item]
-
+        let movie = isFiltering ? searchResults[indexPath.item] : movies[indexPath.item]
         cell.setImage(with: movie.posterPath)
         cell.setNumber(nil)
-
         cell.posterButton.tag = indexPath.item
         cell.posterButton.addTarget(self, action: #selector(handlePosterButtonTap(_:)), for: .touchUpInside)
         return cell
@@ -140,9 +147,7 @@ extension SearchViewController: UICollectionViewDataSource {
 
 extension SearchViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let movie = isFiltering
-            ? searchResults[indexPath.item]
-            : movies[indexPath.item]
+        let movie = isFiltering ? searchResults[indexPath.item] : movies[indexPath.item]
         let detailVC = MovieDetailViewController(movie: movie)
         navigationController?.pushViewController(detailVC, animated: true)
     }
@@ -155,7 +160,6 @@ extension SearchViewController: UISearchBarDelegate {
         if searchText.isEmpty {
             searchResults = []
         } else {
-            // 제목에 검색어 포함된 영화만 필터링
             searchResults = movies.filter {
                 $0.title.localizedCaseInsensitiveContains(searchText)
             }
