@@ -7,16 +7,22 @@
 
 import Foundation
 
+// MARK: - MovieListViewModel
+
 final class MovieListViewModel: ViewModelProtocol {
+    // MARK: - Types
+
     enum Action {
         case fetchAll
     }
 
     struct State {
-        var movieChart: [MovieResults] = []
-        var nowPlaying: [MovieResults] = []
-        var upcoming: [MovieResults] = []
+        var movieChart: [MovieResults] = [] // 무비 차트 데이터
+        var nowPlaying: [MovieResults] = [] // 현재 상영작
+        var upcoming: [MovieResults] = [] // 상영 예정작
     }
+
+    // MARK: - Properties
 
     private(set) var state: State = .init() {
         didSet { onDataUpdated?(state) }
@@ -25,7 +31,11 @@ final class MovieListViewModel: ViewModelProtocol {
     private let dataService = DataService()
     var onDataUpdated: ((State) -> Void)?
 
+    // MARK: - Initialization
+
     init() {}
+
+    // MARK: - Public Methods
 
     func action(_ action: Action) {
         switch action {
@@ -39,6 +49,8 @@ final class MovieListViewModel: ViewModelProtocol {
         fetchNowPlaying()
         fetchUpcoming()
     }
+
+    // MARK: - Private Methods
 
     private func fetchMovieChart() {
         dataService.fetchData(endpoint: "popular") { [weak self] result in
