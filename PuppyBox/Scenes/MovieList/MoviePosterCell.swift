@@ -67,7 +67,8 @@ final class MoviePosterCell: UICollectionViewCell {
     // Parameter path : 이미지 경로
     func setImage(with path: String?) {
         guard let path = path else { return }
-        let url = URL(string: "https://image.tmdb.org/t/p/original\(path)")
+        let imageURL = ImagePathService.makeImagePath(size: .original, posterPath: path)
+        let url = URL(string: imageURL)
         posterButton.kf.setImage(with: url, for: .normal)
     }
 
