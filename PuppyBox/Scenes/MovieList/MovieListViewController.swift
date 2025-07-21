@@ -10,9 +10,12 @@ import SnapKit
 import Then
 import UIKit
 
-class MovieListViewController: UIViewController {
-    private let viewModel = MovieListViewModel()
+// MARK: - MovieListViewController
 
+class MovieListViewController: UIViewController {
+    // MARK: - Properties
+
+    private let viewModel = MovieListViewModel()
     private let sectionTitles = ["무비차트", "현재 상영작", "상영 예정작"]
 
     private let labelImageView = UIImageView().then {
@@ -25,7 +28,12 @@ class MovieListViewController: UIViewController {
         $0.contentMode = .scaleAspectFit
     }
 
-    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
+    private lazy var collectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: makeLayout()
+    )
+
+    // MARK: - Life Cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,6 +60,8 @@ class MovieListViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: false)
     }
 
+    // MARK: - UI Setup
+
     private func setupHeader() {
         view.addSubview(labelImageView)
         view.addSubview(logoImageView)
@@ -73,7 +83,10 @@ class MovieListViewController: UIViewController {
         view.addSubview(collectionView)
         collectionView.backgroundColor = .white
         collectionView.dataSource = self
-        collectionView.register(MoviePosterCell.self, forCellWithReuseIdentifier: MoviePosterCell.identifier)
+        collectionView.register(
+            MoviePosterCell.self,
+            forCellWithReuseIdentifier: MoviePosterCell.identifier
+        )
         collectionView.register(
             MovieSectionHeader.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
@@ -83,9 +96,10 @@ class MovieListViewController: UIViewController {
         collectionView.snp.makeConstraints {
             $0.top.equalTo(labelImageView.snp.bottom).offset(16)
             $0.leading.trailing.bottom.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(8)
         }
     }
+
+    // MARK: - Layout
 
     private func makeLayout() -> UICollectionViewLayout {
         UICollectionViewCompositionalLayout { _, _ in
@@ -108,7 +122,9 @@ class MovieListViewController: UIViewController {
             let section = NSCollectionLayoutSection(group: group)
             section.orthogonalScrollingBehavior = .continuous
             section.interGroupSpacing = 10
-            section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 20, bottom: 20, trailing: 20)
+            section.contentInsets = NSDirectionalEdgeInsets(
+                top: 16, leading: 20, bottom: 20, trailing: 20
+            )
 
             let headerSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1),
@@ -120,10 +136,11 @@ class MovieListViewController: UIViewController {
                 alignment: .top
             )
             section.boundarySupplementaryItems = [boundaryItem]
-
             return section
         }
     }
+
+    // MARK: - Actions
 
     @objc private func handlePosterButtonTap(_ sender: UIButton) {
         guard let sectionString = sender.accessibilityIdentifier,
@@ -140,16 +157,18 @@ class MovieListViewController: UIViewController {
         default: movie = nil
         }
 
-        if let movie {
+        if let movie = movie {
             let detailVC = MovieDetailViewController(movie: movie)
             navigationController?.pushViewController(detailVC, animated: true)
         }
     }
 }
 
+// MARK: - UICollectionViewDataSource
+
 extension MovieListViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        sectionTitles.count
+        return sectionTitles.count
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -161,8 +180,15 @@ extension MovieListViewController: UICollectionViewDataSource {
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MoviePosterCell.identifier, for: indexPath) as! MoviePosterCell
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: MoviePosterCell.identifier,
+            for: indexPath
+        ) as! MoviePosterCell
+
         let movie: MovieResults?
         switch indexPath.section {
         case 0: movie = viewModel.state.movieChart[indexPath.item]
@@ -174,21 +200,32 @@ extension MovieListViewController: UICollectionViewDataSource {
         }
         cell.setImage(with: movie?.posterPath)
 
-        cell.posterButton.tag = indexPath.row
+        cell.posterButton.tag = indexPath.item
         cell.posterButton.accessibilityIdentifier = "\(indexPath.section)"
-        cell.posterButton.addTarget(self, action: #selector(handlePosterButtonTap(_:)), for: .touchUpInside)
+        cell.posterButton.addTarget(
+            self,
+            action: #selector(handlePosterButtonTap(_:)),
+            for: .touchUpInside
+        )
 
         if indexPath.section == 0 {
             cell.setNumber(indexPath.item + 1)
         } else {
             cell.setNumber(nil)
         }
-
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: MovieSectionHeader.identifier, for: indexPath) as! MovieSectionHeader
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        let header = collectionView.dequeueReusableSupplementaryView(
+            ofKind: kind,
+            withReuseIdentifier: MovieSectionHeader.identifier,
+            for: indexPath
+        ) as! MovieSectionHeader
         header.setTitle(sectionTitles[indexPath.section])
         return header
     }
@@ -196,5 +233,5 @@ extension MovieListViewController: UICollectionViewDataSource {
 
 @available(iOS 17.0, *)
 #Preview {
-    MovieListViewController() // 자기가 볼 뷰컨트롤러로
+    MovieListViewController()
 }
