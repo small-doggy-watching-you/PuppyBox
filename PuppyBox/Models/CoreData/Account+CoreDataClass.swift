@@ -2,12 +2,14 @@
 //  Account+CoreDataClass.swift
 //  PuppyBox
 //
-//  Created by Yoon on 7/16/25.
+//  Created by Yoon on 7/21/25.
 //
 //
 
-import CoreData
 import Foundation
+import CoreData
 
 @objc(Account)
-public class Account: NSManagedObject {}
+public class Account: NSManagedObject {
+
+}

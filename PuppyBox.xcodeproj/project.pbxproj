@@ -11,10 +11,14 @@
 		FE41B3A92E27387000BD2D22 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = FE41B3A82E27387000BD2D22 /* SnapKit */; };
 		FE41B3AC2E27387A00BD2D22 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = FE41B3AB2E27387A00BD2D22 /* Then */; };
 		FE41B3B42E273DE800BD2D22 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = FE41B3B32E273DE800BD2D22 /* Alamofire */; };
+		FE58AF1A2E2DE6F000B2EC34 /* Account+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE58AF182E2DE6F000B2EC34 /* Account+CoreDataClass.swift */; };
+		FE58AF1B2E2DE6F000B2EC34 /* Account+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE58AF192E2DE6F000B2EC34 /* Account+CoreDataProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		36562E882E2674BC001F04E8 /* PuppyBox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PuppyBox.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FE58AF182E2DE6F000B2EC34 /* Account+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Account+CoreDataClass.swift"; path = "PuppyBox/Models/CoreData/Account+CoreDataClass.swift"; sourceTree = "<group>"; };
+		FE58AF192E2DE6F000B2EC34 /* Account+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Account+CoreDataProperties.swift"; path = "PuppyBox/Models/CoreData/Account+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -56,6 +60,8 @@
 		36562E7F2E2674BC001F04E8 = {
 			isa = PBXGroup;
 			children = (
+				FE58AF182E2DE6F000B2EC34 /* Account+CoreDataClass.swift */,
+				FE58AF192E2DE6F000B2EC34 /* Account+CoreDataProperties.swift */,
 				36562E8A2E2674BC001F04E8 /* PuppyBox */,
 				36562E892E2674BC001F04E8 /* Products */,
 			);
@@ -153,6 +159,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FE58AF1A2E2DE6F000B2EC34 /* Account+CoreDataClass.swift in Sources */,
+				FE58AF1B2E2DE6F000B2EC34 /* Account+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

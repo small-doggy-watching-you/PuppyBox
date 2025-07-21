@@ -21,10 +21,10 @@
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Account" inverseName="reservation" inverseEntity="Account"/>
     </entity>
     <entity name="WatchedMovie" representedClassName="WatchedMovie" syncable="YES">
-        <attribute name="movieId" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="movieId" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="movieName" attributeType="String"/>
         <attribute name="posterImagePath" optional="YES" attributeType="String"/>
-        <attribute name="screeningDate" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="screeningDate" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="owner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Account" inverseName="watchedMovies" inverseEntity="Account"/>
     </entity>
 </model>
