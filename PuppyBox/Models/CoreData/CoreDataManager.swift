@@ -119,6 +119,32 @@ final class CoreDataManager {
 
         return (try? context.fetch(fetchRequest)) ?? []
     }
+    
+    // 실행시 날짜가 지나면 예매기록에서 관람 기록으로 이동하는 함수 (근데 이거 원래 서버쪽에서...)
+    func moveExpiredReservationsToWatched(for account: Account) {
+        let now = Date()
+        let fetchRequest: NSFetchRequest<Reservation> = Reservation.fetchRequest()
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "user == %@", account),
+            NSPredicate(format: "screeningDate < %@", now as NSDate)
+        ])
+
+        guard let expiredReservations = try? context.fetch(fetchRequest) else { return }
+
+        for reservation in expiredReservations {
+            let watched = WatchedMovie(context: context)
+            watched.movieId = reservation.movieId
+            watched.movieName = reservation.movieName
+            watched.posterImagePath = reservation.posterImagePath ?? ""
+            watched.screeningDate = reservation.screeningDate
+            watched.owner = account
+
+            context.delete(reservation)
+        }
+
+        saveContext()
+    }
+
 }
 
 extension CoreDataManager {
