@@ -137,7 +137,7 @@ class MyPageViewController: UIViewController {
 
             switch section {
             case .reservedMovie:
-                headerView.titleLabel.text = "예매중인 영화"
+                headerView.titleLabel.text = "예매 중인 영화"
                 headerView.moreButton.isHidden = true
             case .histories:
                 headerView.titleLabel.text = "관람 기록"
