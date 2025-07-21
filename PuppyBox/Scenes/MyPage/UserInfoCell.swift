@@ -31,12 +31,12 @@ final class UserInfoCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+
         contentView.addSubview(profileImageView)
         contentView.addSubview(nicknameLabel)
         contentView.addSubview(userIdLabel)
         contentView.addSubview(emailLabel)
-        
+
         profileImageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalToSuperview().inset(27)
@@ -70,6 +70,5 @@ final class UserInfoCell: UICollectionViewCell {
         profileImageView.image = UIImage(named: userInfo.profileImagePath)
         userIdLabel.text = "ID : \(userInfo.userId)"
         emailLabel.text = userInfo.email
-
     }
 }
