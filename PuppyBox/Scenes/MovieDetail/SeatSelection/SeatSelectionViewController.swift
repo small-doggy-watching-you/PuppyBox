@@ -84,7 +84,7 @@ final class SeatSelectionViewController: UIViewController {
         appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
-
+        navigationItem.backButtonDisplayMode = .minimal
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "house.fill"),
             style: .plain,
@@ -161,12 +161,15 @@ final class SeatSelectionViewController: UIViewController {
                 )
             }
             
-            let ticketVC = TicketViewController(
+            let ticketVM = TicketViewModel(
                 movie: self.viewModel.movieInfo,
                 seats: self.viewModel.selectedSeatsArray,
                 date: self.viewModel.dateInfo,
-                time: self.viewModel.timeInfo
+                time: self.viewModel.timeInfo,
+                price: totalPrice
             )
+
+            let ticketVC = TicketViewController(viewModel: ticketVM)
             self.navigationController?.pushViewController(ticketVC, animated: true)
         }
         present(alert, animated: true)
