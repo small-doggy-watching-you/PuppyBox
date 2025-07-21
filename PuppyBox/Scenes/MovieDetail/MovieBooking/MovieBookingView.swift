@@ -148,47 +148,46 @@ final class MovieBookingView: UIView, UICollectionViewDelegate {
     // MARK: - 레이아웃
 
     private func makeLayout() -> UICollectionViewLayout {
-        UICollectionViewCompositionalLayout(
-            sectionProvider: { [weak self] (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-                guard let self = self,
-                      let section = self.dataSource.snapshot().sectionIdentifiers[safe: sectionIndex]
-                else {
-                    return nil
-                }
-                switch section {
-                case .dateSelection:
-                    let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(50), heightDimension: .absolute(60))
-                    let item = NSCollectionLayoutItem(layoutSize: itemSize)
-                    let group = NSCollectionLayoutGroup.horizontal(layoutSize: itemSize, subitems: [item])
-                    let section = NSCollectionLayoutSection(group: group)
-                    section.orthogonalScrollingBehavior = .continuous
-                    section.interGroupSpacing = 8
-                    section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
-                    return section
-                case .timeSelection:
-                    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.3), heightDimension: .absolute(40))
-                    let item = NSCollectionLayoutItem(layoutSize: itemSize)
-                    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(45))
-                    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-                    group.interItemSpacing = .fixed(8)
-                    let section = NSCollectionLayoutSection(group: group)
-                    section.interGroupSpacing = 8
-                    section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 16, trailing: 16)
-                    section.boundarySupplementaryItems = [self.makeHeaderItem()]
-                    return section
-                case .ticketQuantity:
-                    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(60))
-                    let item = NSCollectionLayoutItem(layoutSize: itemSize)
-                    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(120))
-                    let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-//                    group.interItemSpacing = .fixed(8)
-                    let section = NSCollectionLayoutSection(group: group)
-                    section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16)
-                    section.boundarySupplementaryItems = [self.makeHeaderItem()]
-                    return section
-                }
+        UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ in
+            guard let section = self?.dataSource.sectionIdentifier(for: sectionIndex) else {
+                return nil
             }
-        )
+
+            switch section {
+            case .dateSelection:
+                let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(50), heightDimension: .absolute(60))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                let group = NSCollectionLayoutGroup.horizontal(layoutSize: itemSize, subitems: [item])
+                let sectionLayout = NSCollectionLayoutSection(group: group)
+                sectionLayout.orthogonalScrollingBehavior = .continuous
+                sectionLayout.interGroupSpacing = 8
+                sectionLayout.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
+                return sectionLayout
+
+            case .timeSelection:
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.3), heightDimension: .absolute(40))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(45))
+                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+                group.interItemSpacing = .fixed(8)
+
+                let sectionLayout = NSCollectionLayoutSection(group: group)
+                sectionLayout.interGroupSpacing = 8
+                sectionLayout.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 16, trailing: 16)
+                sectionLayout.boundarySupplementaryItems = [self?.makeHeaderItem()].compactMap { $0 }
+                return sectionLayout
+
+            case .ticketQuantity:
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(60))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(120))
+                let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+                let sectionLayout = NSCollectionLayoutSection(group: group)
+                sectionLayout.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16)
+                sectionLayout.boundarySupplementaryItems = [self?.makeHeaderItem()].compactMap { $0 }
+                return sectionLayout
+            }
+        }
     }
 
     private func makeHeaderItem() -> NSCollectionLayoutBoundarySupplementaryItem {
@@ -239,14 +238,17 @@ final class MovieBookingView: UIView, UICollectionViewDelegate {
         let headerRegistration = UICollectionView.SupplementaryRegistration<MovieBookingSectionHeaderView>(
             elementKind: UICollectionView.elementKindSectionHeader
         ) { [weak self] header, _, indexPath in
-            guard let section = self?.dataSource.snapshot().sectionIdentifiers[safe: indexPath.section] else {
+            guard let section = self?.dataSource.sectionIdentifier(for: indexPath.section) else {
                 header.configure(title: nil)
                 return
             }
             switch section {
-            case .timeSelection: header.configure(title: "영화 시간")
-            case .ticketQuantity: header.configure(title: "티켓 수량")
-            default: header.configure(title: nil)
+            case .timeSelection:
+                header.configure(title: "영화 시간")
+            case .ticketQuantity:
+                header.configure(title: "티켓 수량")
+            default:
+                header.configure(title: nil)
             }
         }
 
@@ -259,26 +261,27 @@ final class MovieBookingView: UIView, UICollectionViewDelegate {
     // MARK: - 셀 선택
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let section = dataSource.snapshot().sectionIdentifiers[indexPath.section]
-        switch section {
-        case .dateSelection:
-            if let prev = selectedDateIndexPath, prev != indexPath {
-                collectionView.deselectItem(at: prev, animated: false)
+        if let section = dataSource.sectionIdentifier(for: indexPath.section) {
+            switch section {
+            case .dateSelection:
+                if let prev = selectedDateIndexPath, prev != indexPath {
+                    collectionView.deselectItem(at: prev, animated: false)
+                }
+                selectedDateIndexPath = indexPath
+            case .timeSelection:
+                if let prev = selectedTimeIndexPath, prev != indexPath {
+                    collectionView.deselectItem(at: prev, animated: false)
+                }
+                selectedTimeIndexPath = indexPath
+            default: break
             }
-            selectedDateIndexPath = indexPath
-        case .timeSelection:
-            if let prev = selectedTimeIndexPath, prev != indexPath {
-                collectionView.deselectItem(at: prev, animated: false)
-            }
-            selectedTimeIndexPath = indexPath
-        default: break
         }
         collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         updateFooterButtonState()
     }
 
     func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
-        let section = dataSource.snapshot().sectionIdentifiers[indexPath.section]
+        let section = dataSource.sectionIdentifier(for: indexPath.section)
         switch section {
         case .dateSelection, .timeSelection: // 날짜와 시간은 선택 해제되지 않도록 막음
             return false
