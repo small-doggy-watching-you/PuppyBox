@@ -160,9 +160,16 @@ extension SearchViewController: UISearchBarDelegate {
         if searchText.isEmpty {
             searchResults = []
         } else {
-            searchResults = movies.filter {
+            let filtered = movies.filter {
                 $0.title.localizedCaseInsensitiveContains(searchText)
             }
+            var uniqueMovies: [MovieResults] = []
+            for movie in filtered {
+                if !uniqueMovies.contains(where: { $0.id == movie.id }) {
+                    uniqueMovies.append(movie)
+                }
+            }
+            searchResults = uniqueMovies
         }
         collectionView.reloadData()
     }
