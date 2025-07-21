@@ -10,7 +10,7 @@ import SnapKit
 import Then
 import UIKit
 
-class SearchViewController: UIViewController, UISearchBarDelegate, UICollectionViewDataSource {
+class SearchViewController: UIViewController {
     private let viewModel = MovieListViewModel()
 
     private var movies: [MovieResults] {
@@ -31,10 +31,15 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UICollectionV
         $0.searchTextField.clearButtonMode = .whileEditing
     }
 
-    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeLayout()).then {
+    private lazy var collectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: makeLayout()
+    ).then {
         $0.backgroundColor = .white
         $0.register(MoviePosterCell.self, forCellWithReuseIdentifier: MoviePosterCell.identifier)
         $0.dataSource = self
+        $0.delegate = self
+        $0.keyboardDismissMode = .onDrag
     }
 
     override func viewDidLoad() {
@@ -49,7 +54,15 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UICollectionV
                 self?.collectionView.reloadData()
             }
         }
+        collectionView.delegate = self
         viewModel.fetchAllData()
+    }
+
+    @objc private func handlePosterButtonTap(_ sender: UIButton) {
+        let idx = sender.tag
+        let movie = isFiltering ? searchResults[idx] : movies[idx]
+        let detailVC = MovieDetailViewController(movie: movie)
+        navigationController?.pushViewController(detailVC, animated: true)
     }
 
     private func setupLayout() {
@@ -68,7 +81,6 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UICollectionV
             heightDimension: .absolute(152)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
         item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5)
 
         let groupSize = NSCollectionLayoutSize(
@@ -91,12 +103,15 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UICollectionV
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom).offset(16)
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(8)
         }
     }
+}
 
-    // MARK: - UICollectionViewDataSource
+// MARK: - UICollectionViewDataSource
 
+extension SearchViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return isFiltering ? searchResults.count : movies.count
     }
@@ -114,15 +129,32 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UICollectionV
         cell.setImage(with: movie.posterPath)
         cell.setNumber(nil)
 
+        cell.posterButton.tag = indexPath.item
+        cell.posterButton.addTarget(self, action: #selector(handlePosterButtonTap(_:)), for: .touchUpInside)
         return cell
     }
+}
 
-    // MARK: - UISearchBarDelegate
+// MARK: - UICollectionViewDelegate
 
+extension SearchViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let movie = isFiltering
+            ? searchResults[indexPath.item]
+            : movies[indexPath.item]
+        let detailVC = MovieDetailViewController(movie: movie)
+        navigationController?.pushViewController(detailVC, animated: true)
+    }
+}
+
+// MARK: - UISearchBarDelegate
+
+extension SearchViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.isEmpty {
             searchResults = []
         } else {
+            // 제목에 검색어 포함된 영화만 필터링
             searchResults = movies.filter {
                 $0.title.localizedCaseInsensitiveContains(searchText)
             }
@@ -140,5 +172,5 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UICollectionV
 
 @available(iOS 17.0, *)
 #Preview {
-    SearchViewController() // 자기가 볼 뷰컨트롤러로
+    SearchViewController()
 }
