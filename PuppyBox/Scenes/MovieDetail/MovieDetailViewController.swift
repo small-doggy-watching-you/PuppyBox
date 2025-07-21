@@ -129,7 +129,7 @@ class MovieDetailViewController: UIViewController {
             movieDetailView.setPosterImage(nil)
             return
         }
-        let urlString = ImagePathService.makeImagePath(size: ImageSize.w780.rawValue, posterPath: posterPath)
+        let urlString = ImagePathService.makeImagePath(size: .w780, posterPath: posterPath)
         guard let url = URL(string: urlString) else {
             movieDetailView.setPosterImage(nil)
             return
