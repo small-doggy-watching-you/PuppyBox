@@ -17,6 +17,12 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UICollectionV
         return viewModel.state.nowPlaying + viewModel.state.upcoming
     }
 
+    private var searchResults: [MovieResults] = []
+
+    private var isFiltering: Bool {
+        return !(searchBar.text?.isEmpty ?? true)
+    }
+
     private let searchBar = UISearchBar().then {
         $0.placeholder = "검색어를 입력하세요"
         $0.searchBarStyle = .minimal
@@ -86,28 +92,48 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UICollectionV
         collectionView.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom).offset(16)
             $0.leading.trailing.bottom.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(8)
         }
     }
 
+    // MARK: - UICollectionViewDataSource
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return movies.count
+        return isFiltering ? searchResults.count : movies.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MoviePosterCell.identifier, for: indexPath) as! MoviePosterCell
-        let movie = movies[indexPath.item]
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: MoviePosterCell.identifier,
+            for: indexPath
+        ) as! MoviePosterCell
+
+        let movie = isFiltering
+            ? searchResults[indexPath.item]
+            : movies[indexPath.item]
+
         cell.setImage(with: movie.posterPath)
         cell.setNumber(nil)
+
         return cell
     }
 
+    // MARK: - UISearchBarDelegate
+
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        print("현재 검색어 :", searchText)
+        if searchText.isEmpty {
+            searchResults = []
+        } else {
+            searchResults = movies.filter {
+                $0.title.localizedCaseInsensitiveContains(searchText)
+            }
+        }
+        collectionView.reloadData()
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = ""
+        searchResults = []
+        collectionView.reloadData()
         searchBar.resignFirstResponder()
     }
 }
