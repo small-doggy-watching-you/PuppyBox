@@ -20,6 +20,22 @@ final class MovieListViewModel: ViewModelProtocol {
         var movieChart: [MovieResults] = [] // 무비 차트 데이터
         var nowPlaying: [MovieResults] = [] // 현재 상영작
         var upcoming: [MovieResults] = [] // 상영 예정작
+        var searchQuery: String = ""
+
+        var searchResults: [MovieResults] {
+            let combined = nowPlaying + upcoming
+            guard !searchQuery.isEmpty else { return combined }
+            let filtered = combined.filter {
+                $0.title.localizedStandardContains(searchQuery)
+            }
+            var unique: [MovieResults] = []
+            for m in filtered {
+                if !unique.contains(where: { $0.id == m.id }) {
+                    unique.append(m)
+                }
+            }
+            return unique
+        }
     }
 
     // MARK: - Properties
@@ -48,6 +64,8 @@ final class MovieListViewModel: ViewModelProtocol {
         fetchMovieChart()
         fetchNowPlaying()
         fetchUpcoming()
+
+        state.searchQuery = ""
     }
 
     // MARK: - Private Methods
@@ -86,5 +104,10 @@ final class MovieListViewModel: ViewModelProtocol {
                 print("Error fetching upcoming: \(error)")
             }
         }
+    }
+
+    func updateSearch(_ query: String) {
+        state.searchQuery = query
+        onDataUpdated?(state)
     }
 }
