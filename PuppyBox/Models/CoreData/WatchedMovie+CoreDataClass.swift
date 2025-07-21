@@ -6,10 +6,8 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(WatchedMovie)
-public class WatchedMovie: NSManagedObject {
-
-}
+public class WatchedMovie: NSManagedObject {}

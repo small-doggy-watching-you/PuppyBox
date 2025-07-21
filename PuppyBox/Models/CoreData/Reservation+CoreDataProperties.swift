@@ -6,25 +6,20 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-
-extension Reservation {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Reservation> {
+public extension Reservation {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<Reservation> {
         return NSFetchRequest<Reservation>(entityName: "Reservation")
     }
 
-    @NSManaged public var userId: String
-    @NSManaged public var movieId: Int32
-    @NSManaged public var movieName: String
-    @NSManaged public var posterImagePath: String?
-    @NSManaged public var screeningDate: Date
-    @NSManaged public var user: Account?
-
+    @NSManaged var userId: String
+    @NSManaged var movieId: Int32
+    @NSManaged var movieName: String
+    @NSManaged var posterImagePath: String?
+    @NSManaged var screeningDate: Date
+    @NSManaged var user: Account?
 }
 
-extension Reservation : Identifiable {
-
-}
+extension Reservation: Identifiable {}

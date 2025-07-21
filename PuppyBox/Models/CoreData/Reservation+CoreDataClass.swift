@@ -6,10 +6,8 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(Reservation)
-public class Reservation: NSManagedObject {
-
-}
+public class Reservation: NSManagedObject {}

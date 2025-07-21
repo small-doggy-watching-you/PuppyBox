@@ -41,59 +41,11 @@ final class CoreDataManager {
         }
     }
 
-    // 기본계정 생성
-    func createBasicAccount() {
-        // 관리자 계정 생성
-        let admin = Account(context: context)
-        admin.id = UUID()
-        admin.userId = "admin"
-        admin.name = "관리자"
-        admin.password = "admin123"
-        admin.email = "admin@example.com"
-        admin.phone = "010-0001-0001"
-        admin.profile = "adminProfile"
-        admin.isAdmin = true
-
-        // 게스트 계정 생성
-        let guest = Account(context: context)
-        guest.id = UUID()
-        guest.userId = "guest"
-        guest.name = "게스트"
-        guest.password = "guest123"
-        guest.email = "guest@example.com"
-        guest.phone = "010-0001-0002"
-        guest.profile = "defaultProfile"
-        guest.isAdmin = false
-
-        saveContext()
-        print("기본 계정 생성 완료")
-    }
-
     // 모든 데이터 추출함수
     func fetchAllAccount() -> [Account] {
         let fetchRequest: NSFetchRequest<Account> = Account.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
         return (try? context.fetch(fetchRequest)) ?? []
-    }
-
-    // 기본 데이터 삭제함수 (필요시 호출해서 계정정보 삭제)
-    func resetAllAccounts() {
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Account.fetchRequest()
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-
-        do {
-            try context.execute(deleteRequest)
-            try context.save()
-            print("모든 계정 삭제 완료")
-        } catch {
-            print("계정 삭제 실패: \(error)")
-        }
-
-        // UserDefaults 키 초기화
-        @UserSetting(key: UDKey.isBasicAccountExist, defaultValue: false)
-        var isBasicAccountExist
-        isBasicAccountExist = false
-        print(" UserDefaults 상태 초기화 완료")
     }
 
     // 비밀번호 획득 함수
@@ -121,7 +73,7 @@ final class CoreDataManager {
         // 일치하는 데이터 존재할 경우 false(생성불가)
         return false
     }
-    
+
     // 회원 정보 추가
     func createUser(userId: String, name: String, password: String, email: String?, phone: String?) {
         let guest = Account(context: context)
@@ -136,7 +88,7 @@ final class CoreDataManager {
 
         saveContext()
     }
-    
+
     // 로그인 된 아이디의 정보 획득
     func fetchAccount(userId: String) -> Account? {
         let fetchRequest: NSFetchRequest<Account> = Account.fetchRequest()
@@ -146,7 +98,6 @@ final class CoreDataManager {
         return try? context.fetch(fetchRequest).first
     }
 
-    
     // 영화 예약 추가
     func addReservation(for account: Account, movieId: Int32, movieName: String, posterImagePath: String, screeningDate: Date) {
         let reservation = Reservation(context: context)
@@ -159,7 +110,7 @@ final class CoreDataManager {
 
         saveContext()
     }
-    
+
     // 관람 기록 호출
     func fetchWatchedMovies(for account: Account) -> [WatchedMovie] {
         let fetchRequest: NSFetchRequest<WatchedMovie> = WatchedMovie.fetchRequest()
@@ -168,6 +119,81 @@ final class CoreDataManager {
 
         return (try? context.fetch(fetchRequest)) ?? []
     }
+}
 
+extension CoreDataManager {
+    // 기본계정 생성
+    func createBasicAccount() {
+        // 관리자 계정 생성
+        let admin = Account(context: context)
+        admin.id = UUID()
+        admin.userId = "admin"
+        admin.name = "관리자"
+        admin.password = "admin123"
+        admin.email = "admin@example.com"
+        admin.phone = "010-0001-0001"
+        admin.profile = "adminProfile"
+        admin.isAdmin = true
 
+        // 게스트 계정 생성
+        let guest = Account(context: context)
+        guest.id = UUID()
+        guest.userId = "guest"
+        guest.name = "게스트"
+        guest.password = "guest123"
+        guest.email = "guest@example.com"
+        guest.phone = "010-0001-0002"
+        guest.profile = "defaultProfile"
+        guest.isAdmin = false
+
+        addDummyWatchedMovies(to: guest)
+
+        saveContext()
+        print("기본 계정 생성 완료")
+    }
+
+    // 더미 관람기록 추가
+    func addDummyWatchedMovies(to account: Account) {
+        let sampleMovies: [(Int32, String, String, String)] = [
+            (1, "가라데 키드: 레전드", "https://image.tmdb.org/t/p/w92/AEgggzRr1vZCLY86MAp93li43z.jpg", "2025-07-01 20:00"),
+            (2, "쥬라기 월드: 새로운 시작", "https://image.tmdb.org/t/p/w92/ygr4hE8Qpagv8sxZbMw1mtYkcQE.jpg", "2025-07-03 18:30"),
+            (3, "브링 허 백", "https://image.tmdb.org/t/p/w92/A4W0yRN7Xy6JLIhRymIh5plK2Zj.jpg", "2025-07-05 17:00"),
+            (4, "판타스틱 4: 새로운 출발", "https://image.tmdb.org/t/p/w92/sHgIQvDlk5188wo9jM8IKFeyJUd.jpg", "2025-07-07 16:30"),
+            (5, "스머프", "https://image.tmdb.org/t/p/w92/1lQHA18T32JyIonQUkSWhMwinjm.jpg", "2025-07-09 19:20"),
+        ]
+
+        for (id, name, image, dateStr) in sampleMovies {
+            let movie = WatchedMovie(context: context)
+            movie.movieId = id
+            movie.movieName = name
+            movie.posterImagePath = image
+            movie.screeningDate = DateFormat.stringToDate(dateStr)!
+            movie.owner = account
+        }
+
+        saveContext()
+    }
+
+    // 기본 데이터 삭제함수 (필요시 호출해서 계정정보 삭제)
+    func resetAllAccounts() {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Account")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        deleteRequest.resultType = .resultTypeObjectIDs
+
+        do {
+            let result = try context.execute(deleteRequest) as? NSBatchDeleteResult
+            let objectIDs = result?.result as? [NSManagedObjectID] ?? []
+            let changes = [NSDeletedObjectsKey: objectIDs]
+            NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [context])
+            try context.save()
+            print("모든 계정 삭제 완료")
+        } catch {
+            print("계정 삭제 실패: \(error)")
+        }
+
+        @UserSetting(key: UDKey.isBasicAccountExist, defaultValue: false)
+        var isBasicAccountExist
+        isBasicAccountExist = false
+        print("UserDefaults 상태 초기화 완료")
+    }
 }

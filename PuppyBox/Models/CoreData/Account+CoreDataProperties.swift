@@ -6,63 +6,56 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-
-extension Account {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Account> {
+public extension Account {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<Account> {
         return NSFetchRequest<Account>(entityName: "Account")
     }
-    
-    @NSManaged public var id: UUID
-    @NSManaged public var userId: String
-    @NSManaged public var password: String
-    @NSManaged public var name: String
-    @NSManaged public var email: String?
-    @NSManaged public var phone: String?
-    @NSManaged public var profile: String?
-    @NSManaged public var isAdmin: Bool
-    @NSManaged public var watchedMovies: NSSet?
-    @NSManaged public var reservation: NSSet?
 
+    @NSManaged var id: UUID
+    @NSManaged var userId: String
+    @NSManaged var password: String
+    @NSManaged var name: String
+    @NSManaged var email: String?
+    @NSManaged var phone: String?
+    @NSManaged var profile: String?
+    @NSManaged var isAdmin: Bool
+    @NSManaged var watchedMovies: NSSet?
+    @NSManaged var reservation: NSSet?
 }
 
 // MARK: Generated accessors for watchedMovies
-extension Account {
 
+public extension Account {
     @objc(addWatchedMoviesObject:)
-    @NSManaged public func addToWatchedMovies(_ value: WatchedMovie)
+    @NSManaged func addToWatchedMovies(_ value: WatchedMovie)
 
     @objc(removeWatchedMoviesObject:)
-    @NSManaged public func removeFromWatchedMovies(_ value: WatchedMovie)
+    @NSManaged func removeFromWatchedMovies(_ value: WatchedMovie)
 
     @objc(addWatchedMovies:)
-    @NSManaged public func addToWatchedMovies(_ values: NSSet)
+    @NSManaged func addToWatchedMovies(_ values: NSSet)
 
     @objc(removeWatchedMovies:)
-    @NSManaged public func removeFromWatchedMovies(_ values: NSSet)
-
+    @NSManaged func removeFromWatchedMovies(_ values: NSSet)
 }
 
 // MARK: Generated accessors for reservation
-extension Account {
 
+public extension Account {
     @objc(addReservationObject:)
-    @NSManaged public func addToReservation(_ value: Reservation)
+    @NSManaged func addToReservation(_ value: Reservation)
 
     @objc(removeReservationObject:)
-    @NSManaged public func removeFromReservation(_ value: Reservation)
+    @NSManaged func removeFromReservation(_ value: Reservation)
 
     @objc(addReservation:)
-    @NSManaged public func addToReservation(_ values: NSSet)
+    @NSManaged func addToReservation(_ values: NSSet)
 
     @objc(removeReservation:)
-    @NSManaged public func removeFromReservation(_ values: NSSet)
-
+    @NSManaged func removeFromReservation(_ values: NSSet)
 }
 
-extension Account : Identifiable {
-
-}
+extension Account: Identifiable {}

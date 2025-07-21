@@ -9,8 +9,8 @@
         <attribute name="phone" optional="YES" attributeType="String"/>
         <attribute name="profile" optional="YES" attributeType="String"/>
         <attribute name="userId" attributeType="String"/>
-        <relationship name="reservation" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Reservation" inverseName="user" inverseEntity="Reservation"/>
-        <relationship name="watchedMovies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WatchedMovie" inverseName="owner" inverseEntity="WatchedMovie"/>
+        <relationship name="reservation" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Reservation" inverseName="user" inverseEntity="Reservation"/>
+        <relationship name="watchedMovies" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WatchedMovie" inverseName="owner" inverseEntity="WatchedMovie"/>
     </entity>
     <entity name="Reservation" representedClassName="Reservation" syncable="YES">
         <attribute name="movieId" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
