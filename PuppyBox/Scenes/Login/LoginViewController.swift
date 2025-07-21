@@ -127,7 +127,8 @@ final class LoginViewController: UIViewController {
         navigationItem.title = "로그인"
 
         configureUI() // UI 생성
-        DummyService.createBasicAccount() // 더미생성 함수
+//        CoreDataManager.shared.resetAllAccounts() // 기본계정 초기화 함수
+        DummyService.createBasicAccount() // 기본계정 함수
 
         // 로그인 버튼액션
         loginButton.addAction(UIAction { [weak self] _ in
