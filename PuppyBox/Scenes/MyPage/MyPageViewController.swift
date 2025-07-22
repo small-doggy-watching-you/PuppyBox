@@ -4,13 +4,12 @@ import UIKit
 import SnapKit
 import Then
 
-@available(iOS 17.0, *)
-#Preview {
-    UINavigationController(rootViewController: MyPageViewController())
-}
-
 class MyPageViewController: UIViewController {
+    // MARK: - Properties
+
     private let viewModel: MyPageViewModel
+
+    // MARK: - UI Components
 
     private let logoutButton = UIButton(configuration: .filled()).then {
         $0.configuration?.title = "로그아웃"
@@ -31,9 +30,7 @@ class MyPageViewController: UIViewController {
         $0.tintColor = .label
     }
 
-    // ------------------
-
-    var isExpanded = false
+    var isExpanded = false // 컬렉션 뷰 펼침 상태 판단
 
     lazy var collectionView = UICollectionView(
         frame: .zero,
@@ -41,6 +38,8 @@ class MyPageViewController: UIViewController {
     )
 
     lazy var collectionViewDataSource = makeDataSource(collectionView)
+
+    // MARK: - Initializers
 
     init() {
         viewModel = MyPageViewModel()
@@ -52,8 +51,12 @@ class MyPageViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Lifecycle
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        // 뷰모델의 유저데이터와 컬렉션 뷰 업데이트
         viewModel.action(.updateUserData)
         updateDataSorce()
     }
@@ -68,9 +71,10 @@ class MyPageViewController: UIViewController {
             updateDataSorce()
         }
 
+        // 로그아웃 버튼 액션
         logoutButton.addAction(UIAction { [weak self] _ in
             guard self != nil else { return }
-            // 신 딜리게이트 이동 방식
+            // 루트 뷰를 바꿔서 로그인화면으로 이동
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let sceneDelegate = windowScene.delegate as? SceneDelegate
             {
@@ -89,11 +93,15 @@ class MyPageViewController: UIViewController {
         }, for: .touchUpInside)
     }
 
+    // MARK: - Setup Methods
+
     func configureUI() {
         view.backgroundColor = .systemBackground
 
+        // 뷰 주입
         navCustomView.addSubview(logoutButton)
 
+        // 네비게이션 바 설정
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: logoutButton)
         navigationItem.titleView = myPageLabel
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: settingSymbol)
@@ -109,6 +117,8 @@ class MyPageViewController: UIViewController {
 
         updateDataSorce()
     }
+
+    // MARK: - Methods
 
     func makeDataSource(_ collectionView: UICollectionView) -> UICollectionViewDiffableDataSource<Section, Item> {
         // 셀 정의
@@ -145,15 +155,16 @@ class MyPageViewController: UIViewController {
                 break
             }
 
+            // 섹션 헤더의 더보기 버튼 액션
             headerView.onTapMoreButton = { [weak self] in
                 guard let self else { return }
                 self.isExpanded.toggle()
                 self.updateDataSorce()
-                if isExpanded {
+                if isExpanded { // 펼침 상태라면
                     headerView.moreButton.configuration?.title = "접기"
                     let symbolConfig = UIImage.SymbolConfiguration(pointSize: 8, weight: .bold)
                     headerView.moreButton.configuration?.image = UIImage(systemName: "chevron.down", withConfiguration: symbolConfig)
-                } else {
+                } else { // 접힘 상태라면
                     headerView.moreButton.configuration?.title = "더보기"
                     let symbolConfig = UIImage.SymbolConfiguration(pointSize: 8, weight: .bold)
                     headerView.moreButton.configuration?.image = UIImage(systemName: "chevron.forward", withConfiguration: symbolConfig)
@@ -184,6 +195,7 @@ class MyPageViewController: UIViewController {
                     subitems: [layoutItem]
                 )
 
+                // 섹션 레이아웃
                 let section = NSCollectionLayoutSection(group: layoutGroup)
                 section.interGroupSpacing = 10
                 section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 70, trailing: 0)
@@ -222,7 +234,9 @@ class MyPageViewController: UIViewController {
         }
     }
 
+    // 데이터 업데이트
     func updateDataSorce() {
+        // 뷰모델에서 데이터 획득
         let userData = viewModel.state.userData
         let userInfo = UserInfo(
             nickname: userData.nickname,
@@ -234,15 +248,16 @@ class MyPageViewController: UIViewController {
         let reservedMovie = userData.reservedMovies
         let histories = userData.watchedMovies
 
+        // SnapShot으로 섹션과 아이템에 데이터 입력
         var snapShot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapShot.appendSections([.userInfo])
         snapShot.appendItems([.userInfo(userInfo)], toSection: .userInfo)
         snapShot.appendSections([.reservedMovie])
         snapShot.appendItems(reservedMovie.map { .reservedMovie($0) }, toSection: .reservedMovie)
-        if isExpanded {
+        if isExpanded { // 펼침 상태라면
             snapShot.appendSections([.histories])
             snapShot.appendItems(histories.map { .histories($0) }, toSection: .histories)
-        } else {
+        } else { // 접힘 상태에는 3건만 출력
             snapShot.appendSections([.histories])
             snapShot.appendItems(histories.prefix(3).map { .histories($0) }, toSection: .histories)
         }

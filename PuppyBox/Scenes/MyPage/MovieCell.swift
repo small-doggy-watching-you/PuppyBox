@@ -5,8 +5,13 @@ import Kingfisher
 import SnapKit
 import Then
 
+// 예매 기록, 관람 기록 공용 셀
 final class MovieCell: UICollectionViewCell {
+    // MARK: - Properties
+
     static let identifier = String(describing: MovieCell.self)
+
+    // MARK: - UI Components
 
     private let moviePosterView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
@@ -37,9 +42,12 @@ final class MovieCell: UICollectionViewCell {
         $0.spacing = 4
     }
 
+    // MARK: - Initializers
+
     override init(frame: CGRect) {
         super.init(frame: frame)
 
+        // 뷰에 주입
         stackView.addArrangedSubview(movieNameLabel)
         stackView.addArrangedSubview(dateLabel)
 
@@ -47,6 +55,7 @@ final class MovieCell: UICollectionViewCell {
         contentView.addSubview(moviePosterView)
         contentView.addSubview(stackView)
 
+        // 오토 레이아웃
         backgroundPosterView.snp.makeConstraints {
             $0.top.bottom.equalToSuperview().inset(8)
             $0.leading.equalToSuperview().inset(16)
@@ -68,10 +77,12 @@ final class MovieCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Setup methods
+
     func configure(with movie: MyMovie) {
         movieNameLabel.text = movie.movieName
         dateLabel.text = movie.screeningDate
-        // Kf downloadImage
+        // TODO: Kf downloadImage를 사용하면 2번 받지 않아도 된다.
         if let url = URL(string: movie.posterImagePath) {
             moviePosterView.kf.setImage(with: url)
             backgroundPosterView.kf.setImage(with: url)
