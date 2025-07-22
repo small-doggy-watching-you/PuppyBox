@@ -5,9 +5,9 @@
 //  Created by 노가현 on 7/21/25.
 //
 
-import UIKit
 import AVFoundation
 import SnapKit
+import UIKit
 
 class SplashViewController: UIViewController {
     // MARK: – Properties
@@ -19,6 +19,7 @@ class SplashViewController: UIViewController {
         sv.spacing = 12
         return sv
     }()
+
     private let labelImageView: UIImageView = {
         let iv = UIImageView()
         iv.image = UIImage(named: "PuppyBoxLabel")
