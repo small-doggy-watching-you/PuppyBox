@@ -184,11 +184,16 @@ final class TicketViewController: UIViewController {
     }
 
     @objc private func goToMyPage() {
-        tabBarController?.selectedIndex = 2 // 마이페이지로 보내버리고
+        guard let tabBarController = tabBarController,
+              let currentNav = navigationController,
+              let index = tabBarController.viewControllers?.firstIndex(of: currentNav) else { return }
         
-        DispatchQueue.main.async { // 홈 탭에서는 루트뷰컨트롤러로 팝해둠
-            if let homeNav = self.tabBarController?.viewControllers?.first as? UINavigationController {
-                homeNav.popToRootViewController(animated: false)
+        tabBarController.selectedIndex = 2 // 마이페이지로 보내버리고
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in // 홈 탭에서는 루트뷰컨트롤러로 팝해둠 -> 검색 탭에서도 접근했을 수 있음
+            if let tabBarController = self?.tabBarController,
+               let nav = tabBarController.viewControllers?[index] as? UINavigationController {
+                nav.popToRootViewController(animated: false)
             }
         }
     }
