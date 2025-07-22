@@ -5,12 +5,13 @@
 //  Created by 노가현 on 7/21/25.
 //
 
-import UIKit
 import AVFoundation
 import SnapKit
+import UIKit
 
 class SplashViewController: UIViewController {
     // MARK: – Properties
+
     private let videoContainer = UIView()
     private let stackView: UIStackView = {
         let sv = UIStackView()
@@ -19,6 +20,7 @@ class SplashViewController: UIViewController {
         sv.spacing = 12
         return sv
     }()
+
     private let labelImageView: UIImageView = {
         let iv = UIImageView()
         iv.image = UIImage(named: "PuppyBoxLabel")
@@ -30,6 +32,7 @@ class SplashViewController: UIViewController {
     private var playerLayer: AVPlayerLayer!
 
     // MARK: – Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
@@ -47,11 +50,12 @@ class SplashViewController: UIViewController {
     }
 
     // MARK: – Setup
+
     private func setupViews() {
         view.addSubview(stackView)
         stackView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.centerY.equalToSuperview().offset(-80)
+            make.centerY.equalToSuperview().offset(-35)
         }
 
         stackView.addArrangedSubview(videoContainer)
@@ -67,7 +71,8 @@ class SplashViewController: UIViewController {
         }
     }
 
-    // MARK: – Video Playback
+    // MARK: – Video Playback#imageLiteral(resourceName: "simulator_screenshot_8300C169-7CBB-47E9-A559-64F19001B77F.png")
+
     private func playSplashVideo() {
         guard let url = Bundle.main.url(forResource: "PuppyBoxOpen", withExtension: "mp4") else {
             transitionToLogin()
@@ -104,6 +109,7 @@ class SplashViewController: UIViewController {
     }
 
     // MARK: – Transition to Login
+
     private func transitionToLogin() {
         // instantiate LoginVC from Main.storyboard
         let loginVC = UIStoryboard(name: "Main", bundle: nil)
