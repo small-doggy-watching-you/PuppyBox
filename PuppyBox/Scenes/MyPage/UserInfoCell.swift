@@ -4,11 +4,15 @@ import UIKit
 import SnapKit
 import Then
 
+// 유저정보 셀
 final class UserInfoCell: UICollectionViewCell {
+    // MARK: - Properties
+
     static let identifier = String(describing: UserInfoCell.self)
 
+    // MARK: - UI Components
+
     private let profileImageView = UIImageView().then {
-        // TODO: 뭘 해야하지?
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 50
@@ -29,14 +33,18 @@ final class UserInfoCell: UICollectionViewCell {
         $0.textColor = .appPrimary
     }
 
+    // MARK: - Initializers
+
     override init(frame: CGRect) {
         super.init(frame: frame)
 
+        // 뷰에 주입
         contentView.addSubview(profileImageView)
         contentView.addSubview(nicknameLabel)
         contentView.addSubview(userIdLabel)
         contentView.addSubview(emailLabel)
 
+        // 오토 레이아웃
         profileImageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalToSuperview().inset(27)
@@ -64,6 +72,8 @@ final class UserInfoCell: UICollectionViewCell {
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Setup Methods
 
     func configure(with userInfo: UserInfo) {
         nicknameLabel.text = userInfo.nickname

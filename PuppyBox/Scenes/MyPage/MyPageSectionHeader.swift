@@ -5,6 +5,8 @@ import SnapKit
 import Then
 
 final class MyPageSectionHeaderView: UICollectionReusableView {
+    // MARK: - UI Components
+
     let titleLabel = UILabel().then {
         $0.font = .plusJakarta(size: 22, weight: .bold)
         $0.textColor = .label
@@ -24,19 +26,26 @@ final class MyPageSectionHeaderView: UICollectionReusableView {
         }
     }
 
+    // MARK: - Closures
+
     var onTapMoreButton: (() -> Void)?
+
+    // MARK: - Initializers
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
+        // 뷰에 주입
         addSubview(titleLabel)
         addSubview(moreButton)
 
+        // 더보기 버튼 액션
         moreButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             self.onTapMoreButton?()
         }, for: .touchUpInside)
 
+        // 오토 레이아웃
         titleLabel.snp.makeConstraints {
             $0.leading.top.bottom.equalToSuperview()
         }

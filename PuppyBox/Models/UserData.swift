@@ -1,6 +1,7 @@
 
 import Foundation
 
+// 마이페이지 출력용 유저 데이터 객체
 struct UserData: Hashable {
     let nickname: String
     let userId: String

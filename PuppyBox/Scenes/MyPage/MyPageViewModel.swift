@@ -2,9 +2,13 @@
 import Foundation
 
 final class MyPageViewModel: ViewModelProtocol {
+    // MARK: - Actions
+
     enum Action {
         case updateUserData
     }
+
+    // MARK: - Properties
 
     struct State {
         var userData: UserData
@@ -14,12 +18,16 @@ final class MyPageViewModel: ViewModelProtocol {
         didSet { onStateChanged?(state) }
     }
 
+    // MARK: - Closures
+
     var onStateChanged: ((State) -> Void)?
+
+    // MARK: - Initializers
 
     init() {
         if let account = fetchCurrentUserAccount() {
             state = State(userData: updateUserData(from: account))
-        } else {
+        } else { // 연결 실패시 빈 데이터 주입
             state = State(userData:
                 UserData(
                     nickname: "",
@@ -33,6 +41,8 @@ final class MyPageViewModel: ViewModelProtocol {
         }
     }
 
+    // MARK: - Methods
+
     func action(_ action: Action) {
         switch action {
         case .updateUserData:
@@ -43,6 +53,7 @@ final class MyPageViewModel: ViewModelProtocol {
     }
 }
 
+// 초기화 문제로 아래 두 함수는 MypageViewModel 전역에 선언
 // 현재 유저 정보 획득
 private func fetchCurrentUserAccount() -> Account? {
     @UserSetting(key: UDKey.userId, defaultValue: "")
@@ -53,7 +64,7 @@ private func fetchCurrentUserAccount() -> Account? {
 // 유저 정보객체에 업데이트
 private func updateUserData(from account: Account) -> UserData {
     let reservations: [MyMovie]
-    
+
     if let movies = account.reservation as? Set<Reservation> {
         reservations = movies.map {
             MyMovie(
