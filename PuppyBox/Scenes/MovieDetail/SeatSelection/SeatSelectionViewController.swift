@@ -126,7 +126,22 @@ final class SeatSelectionViewController: UIViewController {
             self.applySnapshot(seats: state.displayedSeats)
             self.seatSelectionView.selectedSeatsLabel.text = state.selectedSeats.isEmpty ? "좌석을 선택해주세요." : "\(state.selectedSeats.joined(separator: ", "))"
             self.seatSelectionView.selectedSeatsLabel.textColor = state.selectedSeats.isEmpty ? .systemGray3 : .label
-            self.seatSelectionView.peopleCountLabel.text = "성인 \(state.adultCount) | 어린이 \(state.childCount)"
+            
+            var peopleTexts: [String] = []
+            if state.adultCount > 0 {
+                peopleTexts.append("성인 \(state.adultCount)")
+            }
+            if state.childCount > 0 {
+                peopleTexts.append("어린이 \(state.childCount)")
+            }
+            // 둘 다 0이면
+            if peopleTexts.isEmpty {
+                // 둘 다 0이면 이렇게 표시
+                self.seatSelectionView.peopleCountLabel.text = "선택한 인원이 없습니다. 당신 이걸 어떻게 본 거지?"
+            } else {
+                self.seatSelectionView.peopleCountLabel.text = peopleTexts.joined(separator: " | ")
+            }
+            
             self.seatSelectionView.priceLabel.text = "\(state.totalPrice)원"
             self.seatSelectionView.payButton.isEnabled = state.isPayEnabled
             self.seatSelectionView.payButton.alpha = state.isPayEnabled ? 1.0 : 0.5
