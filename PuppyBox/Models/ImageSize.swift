@@ -1,4 +1,5 @@
 
+// API로 수신받는 이미지 사이즈 enum
 enum ImageSize: String {
     case w92
     case w154
