@@ -157,7 +157,12 @@ final class SignUpViewController: UIViewController {
         navigationController?.navigationBar.tintColor = .appPrimary
 
         configureUI()
-
+        
+        // 빈 화면 클릭시 키보드 다운
+        let tapDismissKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapDismissKeyboard.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapDismissKeyboard)
+        
         // 아이디 입력란 감지액션 추가
         idTextField.addTarget(self, action: #selector(idTextFieldDidChange(_:)), for: .editingChanged)
 
@@ -419,5 +424,11 @@ final class SignUpViewController: UIViewController {
             present(alert, animated: true)
             return false
         }
+    }
+    
+    // 키보드 내리는 액션
+    @objc
+    private func dismissKeyboard() {
+        view.endEditing(true)
     }
 }

@@ -142,12 +142,12 @@ final class LoginViewController: UIViewController {
         // 회원가입 라벨에 액션주입
         let tapSignUp = UITapGestureRecognizer(target: self, action: #selector(didTapSignUpLabel))
         signUpLabel.addGestureRecognizer(tapSignUp)
-
+        
+        // 빈 화면 클릭시 키보드 다운
         let tapDismissKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapDismissKeyboard.cancelsTouchesInView = false
         view.addGestureRecognizer(tapDismissKeyboard)
 
-        print(signUpLabel.gestureRecognizers ?? [])
     }
 
     override func viewDidAppear(_: Bool) {
