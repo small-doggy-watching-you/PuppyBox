@@ -14,9 +14,9 @@ import UIKit
 
 class SearchViewController: UIViewController {
     // MARK: - Properties
-    
+
     private let viewModel = MovieListViewModel()
-    
+
     private let searchBar = UISearchBar().then {
         $0.placeholder = "검색어를 입력하세요"
         $0.searchBarStyle = .minimal
@@ -24,7 +24,7 @@ class SearchViewController: UIViewController {
         $0.returnKeyType = .search
         $0.searchTextField.clearButtonMode = .whileEditing
     }
-    
+
     private lazy var collectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: makeLayout()
@@ -35,9 +35,16 @@ class SearchViewController: UIViewController {
         $0.delegate = self
         $0.keyboardDismissMode = .onDrag
     }
-    
+
+    private let emptyLabel = UILabel().then {
+        $0.text = "검색 결과 없음"
+        $0.textAlignment = .center
+        $0.textColor = .secondaryLabel
+        $0.font = .systemFont(ofSize: 16, weight: .medium)
+    }
+
     // MARK: - Life Cycle
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = ""
@@ -46,29 +53,30 @@ class SearchViewController: UIViewController {
         setupLayout()
         setupCollectionViewLayout()
         searchBar.delegate = self
-        
+
         viewModel.onDataUpdated = { [weak self] _ in
             DispatchQueue.main.async {
                 self?.collectionView.reloadData()
+                self?.updateEmptyState()
             }
         }
         viewModel.fetchAllData()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         // 네비게이션 바 숨기기
         navigationController?.setNavigationBarHidden(true, animated: false)
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         // 다시 네비게이션 바 보이기
         navigationController?.setNavigationBarHidden(false, animated: false)
     }
-    
+
     // MARK: - Layout
-    
+
     // 서치바, 컬렉션뷰의 레이아웃 설정
     private func setupLayout() {
         view.addSubview(searchBar)
@@ -79,7 +87,7 @@ class SearchViewController: UIViewController {
             $0.height.equalTo(36)
         }
     }
-    
+
     private func makeLayout() -> UICollectionViewLayout {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1 / 3),
@@ -87,7 +95,7 @@ class SearchViewController: UIViewController {
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5)
-        
+
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .absolute(152)
@@ -96,14 +104,22 @@ class SearchViewController: UIViewController {
             layoutSize: groupSize,
             subitems: [item, item, item]
         )
-        
+
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 10
         section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
-        
+
         return UICollectionViewCompositionalLayout(section: section)
     }
-    
+
+    private func updateEmptyState() {
+        if viewModel.state.searchResults.isEmpty {
+            collectionView.backgroundView = emptyLabel
+        } else {
+            collectionView.backgroundView = nil
+        }
+    }
+
     private func setupCollectionViewLayout() {
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints {
@@ -112,9 +128,9 @@ class SearchViewController: UIViewController {
             $0.bottom.equalToSuperview()
         }
     }
-    
+
     // MARK: - Actions
-    
+
     // 포스터 버튼 탭 시 상세 화면으로 이동
     @objc private func handlePosterButtonTap(_ sender: UIButton) {
         let idx = sender.tag
@@ -130,13 +146,13 @@ extension SearchViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.state.searchResults.count
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: MoviePosterCell.identifier,
             for: indexPath
         ) as! MoviePosterCell
-        
+
         let movie = viewModel.state.searchResults[indexPath.item]
         cell.setImage(with: movie.posterPath)
         cell.setNumber(nil)
@@ -162,7 +178,7 @@ extension SearchViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         viewModel.updateSearch(searchText)
     }
-    
+
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = ""
         viewModel.updateSearch("")

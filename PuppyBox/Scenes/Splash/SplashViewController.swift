@@ -11,7 +11,6 @@ import UIKit
 
 class SplashViewController: UIViewController {
     // MARK: – Properties
-
     private let videoContainer = UIView()
     private let stackView: UIStackView = {
         let sv = UIStackView()
@@ -32,7 +31,6 @@ class SplashViewController: UIViewController {
     private var playerLayer: AVPlayerLayer!
 
     // MARK: – Lifecycle
-
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
@@ -50,12 +48,11 @@ class SplashViewController: UIViewController {
     }
 
     // MARK: – Setup
-
     private func setupViews() {
         view.addSubview(stackView)
         stackView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.centerY.equalToSuperview().offset(-35)
+            make.centerY.equalToSuperview().offset(-80)
         }
 
         stackView.addArrangedSubview(videoContainer)
@@ -71,8 +68,7 @@ class SplashViewController: UIViewController {
         }
     }
 
-    // MARK: – Video Playback#imageLiteral(resourceName: "simulator_screenshot_8300C169-7CBB-47E9-A559-64F19001B77F.png")
-
+    // MARK: – Video Playback
     private func playSplashVideo() {
         guard let url = Bundle.main.url(forResource: "PuppyBoxOpen", withExtension: "mp4") else {
             transitionToLogin()
@@ -109,7 +105,6 @@ class SplashViewController: UIViewController {
     }
 
     // MARK: – Transition to Login
-
     private func transitionToLogin() {
         // instantiate LoginVC from Main.storyboard
         let loginVC = UIStoryboard(name: "Main", bundle: nil)
