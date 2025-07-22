@@ -112,10 +112,10 @@ final class CoreDataManager {
     }
 
     // 영화 예약 추가
-    func addReservation(for account: Account, movieId: Int32, movieName: String, posterImagePath: String, screeningDate: Date) {
+    func addReservation(for account: Account, movieId: Int32, movieName: String, posterImagePath: String, screeningDate: Date) -> Bool {
         if reservationExists(for: account, movieId: movieId, screeningDate: screeningDate) {
             print("⚠️ 동일한 예약이 이미 존재하므로 추가하지 않습니다.")
-            return
+            return false
         }
         
         let reservation = Reservation(context: context)
@@ -127,6 +127,7 @@ final class CoreDataManager {
         reservation.user = account
 
         saveContext()
+        return true
     }
 
     // 관람 기록 호출

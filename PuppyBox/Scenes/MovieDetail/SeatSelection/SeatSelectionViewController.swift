@@ -152,25 +152,30 @@ final class SeatSelectionViewController: UIViewController {
             
             if let screeningDate = makeScreeningDate(selectedDate: selectedDate, selectedTime: selectedTime) {
                 
-                CoreDataManager.shared.addReservation(
+                let success = CoreDataManager.shared.addReservation(
                     for: account,
                     movieId: Int32(movie.id),
                     movieName: movie.title,
                     posterImagePath: movie.posterPath ?? "",
                     screeningDate: screeningDate
                 )
+                if success { // 예약 성공 시
+                    let ticketVM = TicketViewModel(
+                        movie: self.viewModel.movieInfo,
+                        seats: self.viewModel.selectedSeatsArray,
+                        date: self.viewModel.dateInfo,
+                        time: self.viewModel.timeInfo,
+                        price: totalPrice
+                    )
+                    
+                    let ticketVC = TicketViewController(viewModel: ticketVM)
+                    self.navigationController?.pushViewController(ticketVC, animated: true)
+                } else { // 예약 실패 시 (같은 영화를 예매한 적 있는 경우
+                    let alert = AlertFactory.duplicateReservationAlert {self.navigationController?.popViewController(animated: true) // 이건 선택
+                    }
+                    self.present(alert, animated: true)
+                }
             }
-            
-            let ticketVM = TicketViewModel(
-                movie: self.viewModel.movieInfo,
-                seats: self.viewModel.selectedSeatsArray,
-                date: self.viewModel.dateInfo,
-                time: self.viewModel.timeInfo,
-                price: totalPrice
-            )
-
-            let ticketVC = TicketViewController(viewModel: ticketVM)
-            self.navigationController?.pushViewController(ticketVC, animated: true)
         }
         present(alert, animated: true)
     }
