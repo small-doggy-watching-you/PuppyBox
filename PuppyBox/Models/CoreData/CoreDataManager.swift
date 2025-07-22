@@ -104,7 +104,7 @@ final class CoreDataManager {
         fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             NSPredicate(format: "user == %@", account),
             NSPredicate(format: "movieId == %d", movieId),
-            NSPredicate(format: "screeningDate == %@", screeningDate as NSDate)
+            NSPredicate(format: "screeningDate == %@", screeningDate as NSDate),
         ])
         fetchRequest.fetchLimit = 1
         let count = (try? context.count(for: fetchRequest)) ?? 0
@@ -117,7 +117,7 @@ final class CoreDataManager {
             print("⚠️ 동일한 예약이 이미 존재하므로 추가하지 않습니다.")
             return false
         }
-        
+
         let reservation = Reservation(context: context)
         reservation.movieId = movieId
         reservation.movieName = movieName
@@ -139,13 +139,13 @@ final class CoreDataManager {
         return (try? context.fetch(fetchRequest)) ?? []
     }
 
-    // 실행시 날짜가 지나면 예매기록에서 관람 기록으로 이동하는 함수 (근데 이거 원래 서버쪽에서...)
+    // 실행시 날짜가 지나면 예매기록에서 관람 기록으로 이동하는 함수
     func moveExpiredReservationsToWatched(for account: Account) {
         let now = Date()
         let fetchRequest: NSFetchRequest<Reservation> = Reservation.fetchRequest()
         fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             NSPredicate(format: "user == %@", account),
-            NSPredicate(format: "screeningDate < %@", now as NSDate)
+            NSPredicate(format: "screeningDate < %@", now as NSDate),
         ])
 
         guard let expiredReservations = try? context.fetch(fetchRequest) else { return }
@@ -166,6 +166,8 @@ final class CoreDataManager {
 }
 
 extension CoreDataManager {
+    // MARK: 기본계정 생성 관련 함수
+
     // 기본계정 생성
     func createBasicAccount() {
         // 관리자 계정 생성
@@ -203,7 +205,7 @@ extension CoreDataManager {
             (2, "쥬라기 월드: 새로운 시작", "https://image.tmdb.org/t/p/w92/ygr4hE8Qpagv8sxZbMw1mtYkcQE.jpg", "2025-07-03 18:30"),
             (3, "브링 허 백", "https://image.tmdb.org/t/p/w92/A4W0yRN7Xy6JLIhRymIh5plK2Zj.jpg", "2025-07-05 17:00"),
             (4, "판타스틱 4: 새로운 출발", "https://image.tmdb.org/t/p/w92/sHgIQvDlk5188wo9jM8IKFeyJUd.jpg", "2025-07-07 16:30"),
-            (5, "스머프", "https://image.tmdb.org/t/p/w92/1lQHA18T32JyIonQUkSWhMwinjm.jpg", "2025-07-09 19:20")
+            (5, "스머프", "https://image.tmdb.org/t/p/w92/1lQHA18T32JyIonQUkSWhMwinjm.jpg", "2025-07-09 19:20"),
         ]
 
         for (id, name, image, dateStr) in sampleMovies {
