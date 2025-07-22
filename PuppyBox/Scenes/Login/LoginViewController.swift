@@ -119,7 +119,7 @@ final class LoginViewController: UIViewController {
     private let scrollView = UIScrollView()
     private let contentView = UIView()
 
-    // MARK: - Methods
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -127,7 +127,9 @@ final class LoginViewController: UIViewController {
         navigationItem.title = "로그인"
 
         configureUI() // UI 생성
+        #if DEBUG
 //        CoreDataManager.shared.resetAllAccounts() // 기본계정 초기화 함수
+        #endif
         DummyService.createBasicAccount() // 기본계정 함수
 
         // 로그인 버튼액션
@@ -142,20 +144,21 @@ final class LoginViewController: UIViewController {
         // 회원가입 라벨에 액션주입
         let tapSignUp = UITapGestureRecognizer(target: self, action: #selector(didTapSignUpLabel))
         signUpLabel.addGestureRecognizer(tapSignUp)
-        
+
         // 빈 화면 클릭시 키보드 다운
         let tapDismissKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapDismissKeyboard.cancelsTouchesInView = false
         view.addGestureRecognizer(tapDismissKeyboard)
-
     }
 
     override func viewDidAppear(_: Bool) {
-        if isLogined { // 로그인한적이 있다면
+        if isLogined { // 로그인한적이 있다면 로그인정보 자동입력
             idTextField.text = userId
             passwordTextField.text = password
         }
     }
+
+    // MARK: - Setup Methods
 
     private func configureUI() {
         // 뷰에 주입
@@ -244,16 +247,18 @@ final class LoginViewController: UIViewController {
 
         loginButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.top.equalTo(joinStackView.snp.bottom).offset(25).priority(249)
+            $0.top.equalTo(joinStackView.snp.bottom).offset(25).priority(249) // 버튼을 하단부에 유지시키기 위해 우선도 낮춤
             $0.top.greaterThanOrEqualTo(joinStackView.snp.bottom).offset(25).priority(251)
             $0.bottom.equalToSuperview().offset(-55)
             $0.height.equalTo(50)
         }
     }
 
+    // MARK: - Methods
+
     // 로그인 제어
     func handleLogin(userId: String, password: String) {
-        // 패스워드가 만는지 파별
+        // 패스워드가 맞는지 판별
         let isLoginSuccess = CoreDataManager.shared.loginVerification(userId: userId, password: password)
 
         if isLoginSuccess { // 로그인 한 적이 있으면
