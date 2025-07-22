@@ -1,7 +1,7 @@
 import Foundation
 
 struct MovieData: Codable {
-    let dates: MovieRanges
+    let dates: MovieRanges?
     let page: Int
     let results: [MovieResults]
     let totalPages: Int

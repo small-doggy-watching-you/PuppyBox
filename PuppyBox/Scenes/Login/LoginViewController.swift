@@ -8,7 +8,7 @@ final class LoginViewController: UIViewController {
     // MARK: - Properties
 
     private let logoOriginSize: CGFloat = 131 / 512 // 비율용 로고 원본 사이즈
-    private let logoWidth: CGFloat = 150 // 로고 너비 설정상수
+    private let logoWidth: CGFloat = 140.62 // 로고 너비 설정상수
     let defaults = UserDefaults.standard // 유저 디폴트
 
     @UserSetting(key: UDKey.userId, defaultValue: "")
@@ -31,7 +31,7 @@ final class LoginViewController: UIViewController {
     // 로그인 글자 라벨 (이미지 하단)
     private let loginLabel = UILabel().then {
         $0.text = "로그인"
-        $0.font = .systemFont(ofSize: 32, weight: .bold)
+        $0.font = .systemFont(ofSize: 24, weight: .bold)
         $0.textColor = .label
         $0.setContentHuggingPriority(.defaultHigh, for: .vertical)
     }
@@ -39,7 +39,7 @@ final class LoginViewController: UIViewController {
     // 아이디 글자 라벨
     private let idLabel = UILabel().then {
         $0.text = "아이디"
-        $0.font = .systemFont(ofSize: 17, weight: .regular)
+        $0.font = .systemFont(ofSize: 16, weight: .regular)
         $0.textColor = .label
     }
 
@@ -50,12 +50,13 @@ final class LoginViewController: UIViewController {
         $0.autocapitalizationType = .none // 자동 대문자 변환 무시
         $0.autocorrectionType = .no // 자동 수정 무시
         $0.smartQuotesType = .no // 스마트 구두점 무시
+        $0.textContentType = .username
     }
 
     // 비밀번호 글자 라벨
     private let passwordLabel = UILabel().then {
         $0.text = "비밀번호"
-        $0.font = .systemFont(ofSize: 17, weight: .regular)
+        $0.font = .systemFont(ofSize: 16, weight: .regular)
         $0.textColor = .label
     }
 
@@ -67,6 +68,7 @@ final class LoginViewController: UIViewController {
         $0.autocapitalizationType = .none
         $0.autocorrectionType = .no
         $0.smartQuotesType = .no
+        $0.textContentType = .password
     }
 
     // 비밀번호 잘못 입력시 출력할 라벨
@@ -87,14 +89,14 @@ final class LoginViewController: UIViewController {
     // 회원가입 글자 |
     private let deviderLabel = UILabel().then {
         $0.text = "|"
-        $0.font = .systemFont(ofSize: 12, weight: .bold)
+        $0.font = .systemFont(ofSize: 11, weight: .bold)
         $0.textColor = .secondaryLabel
     }
 
     // 회원가입 글자 우측
     private let signUpLabel = UILabel().then {
         $0.text = "회원가입"
-        $0.font = .systemFont(ofSize: 12, weight: .bold)
+        $0.font = .systemFont(ofSize: 11, weight: .bold)
         $0.textColor = .secondaryLabel
         $0.isUserInteractionEnabled = true // 터치이벤트 받기 위한 속성
     }
@@ -103,7 +105,7 @@ final class LoginViewController: UIViewController {
     private let loginButton = UIButton().then {
         $0.setTitle("로그인", for: .normal)
         $0.setTitleColor(.systemBackground, for: .normal)
-        $0.layer.cornerRadius = 10
+        $0.layer.cornerRadius = 6
         $0.backgroundColor = .appPrimary
     }
 
@@ -117,14 +119,18 @@ final class LoginViewController: UIViewController {
     private let scrollView = UIScrollView()
     private let contentView = UIView()
 
-    // MARK: - Methods
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        navigationItem.title = "로그인"
 
         configureUI() // UI 생성
-        DummyService.createBasicAccount() // 더미생성 함수
+        #if DEBUG
+//        CoreDataManager.shared.resetAllAccounts() // 기본계정 초기화 함수
+        #endif
+        DummyService.createBasicAccount() // 기본계정 함수
 
         // 로그인 버튼액션
         loginButton.addAction(UIAction { [weak self] _ in
@@ -139,16 +145,20 @@ final class LoginViewController: UIViewController {
         let tapSignUp = UITapGestureRecognizer(target: self, action: #selector(didTapSignUpLabel))
         signUpLabel.addGestureRecognizer(tapSignUp)
 
+        // 빈 화면 클릭시 키보드 다운
         let tapDismissKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapDismissKeyboard.cancelsTouchesInView = false
         view.addGestureRecognizer(tapDismissKeyboard)
     }
 
     override func viewDidAppear(_: Bool) {
-        if isLogined { // 로그인한적이 있다면
+        if isLogined { // 로그인한적이 있다면 로그인정보 자동입력
             idTextField.text = userId
             passwordTextField.text = password
         }
     }
+
+    // MARK: - Setup Methods
 
     private func configureUI() {
         // 뷰에 주입
@@ -187,12 +197,12 @@ final class LoginViewController: UIViewController {
 
         contentView.snp.makeConstraints {
             $0.top.bottom.equalTo(scrollView.contentLayoutGuide)
-            $0.leading.trailing.equalTo(scrollView.frameLayoutGuide).inset(20) // 수직 스크롤으로 고정
+            $0.leading.trailing.equalTo(scrollView.frameLayoutGuide).inset(16) // 수직 스크롤으로 고정
             $0.width.equalTo(scrollView.contentLayoutGuide)
         }
 
         logoImage.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(100)
+            $0.top.equalToSuperview().offset(154)
             $0.centerX.equalToSuperview()
             $0.width.equalTo(logoWidth)
             $0.height.equalTo(logoWidth * logoOriginSize) // 비율 계산
@@ -204,7 +214,7 @@ final class LoginViewController: UIViewController {
         }
 
         idLabel.snp.makeConstraints {
-            $0.top.equalTo(loginLabel.snp.bottom).offset(50)
+            $0.top.equalTo(loginLabel.snp.bottom).offset(40)
             $0.leading.equalToSuperview()
         }
 
@@ -215,7 +225,7 @@ final class LoginViewController: UIViewController {
         }
 
         passwordLabel.snp.makeConstraints {
-            $0.top.equalTo(idTextField.snp.bottom).offset(25)
+            $0.top.equalTo(idTextField.snp.bottom).offset(20)
             $0.leading.equalToSuperview()
         }
 
@@ -226,27 +236,29 @@ final class LoginViewController: UIViewController {
         }
 
         wrongPasswordLabel.snp.makeConstraints {
-            $0.top.equalTo(passwordTextField.snp.bottom).offset(5)
+            $0.top.equalTo(passwordTextField.snp.bottom).offset(6)
             $0.left.equalToSuperview()
         }
 
         joinStackView.snp.makeConstraints {
-            $0.top.equalTo(passwordTextField.snp.bottom).offset(50)
+            $0.top.equalTo(wrongPasswordLabel.snp.bottom).offset(24)
             $0.centerX.equalToSuperview()
         }
 
         loginButton.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(30)
-            $0.top.equalTo(joinStackView.snp.bottom).offset(25).priority(249)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.top.equalTo(joinStackView.snp.bottom).offset(25).priority(249) // 버튼을 하단부에 유지시키기 위해 우선도 낮춤
             $0.top.greaterThanOrEqualTo(joinStackView.snp.bottom).offset(25).priority(251)
-            $0.bottom.equalToSuperview().offset(-20)
+            $0.bottom.equalToSuperview().offset(-55)
             $0.height.equalTo(50)
         }
     }
 
+    // MARK: - Methods
+
     // 로그인 제어
     func handleLogin(userId: String, password: String) {
-        // 패스워드가 만는지 파별
+        // 패스워드가 맞는지 판별
         let isLoginSuccess = CoreDataManager.shared.loginVerification(userId: userId, password: password)
 
         if isLoginSuccess { // 로그인 한 적이 있으면
@@ -256,9 +268,9 @@ final class LoginViewController: UIViewController {
             self.password = password
 
             // 페이지 이동
-            let movieListVC = MovieListViewController()
-            movieListVC.modalPresentationStyle = .fullScreen
-            present(movieListVC, animated: true)
+            let mainTabBarVC = MainTabBarController()
+            mainTabBarVC.modalPresentationStyle = .fullScreen
+            present(mainTabBarVC, animated: true)
 
         } else {
             // "비밀번호를 잘못 입력했습니다"의 히든 해제
