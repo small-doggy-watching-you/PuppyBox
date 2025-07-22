@@ -92,4 +92,5 @@ Splash부터 로그인, 영화 검색 및 상세정보, 예매, 마이페이지 
 
 ---
 
+## 🎨 와이어프레임
 <img width="840" height="727" alt="스크린샷 2025-07-22 오전 11 09 58" src="https://github.com/user-attachments/assets/cf34c9c6-6c99-4c97-9724-d211ba4e499c" />
