@@ -69,7 +69,7 @@ final class TicketViewController: UIViewController {
         let posterImageView = UIImageView().then {
             $0.contentMode = .scaleAspectFill
             $0.clipsToBounds = true
-            $0.layer.cornerRadius = 12
+            $0.layer.cornerRadius = 20
             if let path = viewModel.state.movie.posterPath {
                 let urlStr = ImagePathService.makeImagePath(size: .w780, posterPath: path)
                 if let url = URL(string: urlStr) {
@@ -111,14 +111,14 @@ final class TicketViewController: UIViewController {
         collectionView.snp.makeConstraints {
             $0.top.equalTo(infoView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(160)
+            $0.height.equalTo(130)
         }
 
         dataSource = UICollectionViewDiffableDataSource<Int, String>(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SeatInfoCell", for: indexPath) as! SeatInfoCell
             let row = String(itemIdentifier.prefix(1))
             let number = String(itemIdentifier.suffix(itemIdentifier.count - 1))
-            cell.configure(salon: "3관", row: row, num: number)
+            cell.configure(salon: "1관\n(3층)", row: row, num: number)
             return cell
         }
         collectionView.register(SeatInfoCell.self, forCellWithReuseIdentifier: "SeatInfoCell")
