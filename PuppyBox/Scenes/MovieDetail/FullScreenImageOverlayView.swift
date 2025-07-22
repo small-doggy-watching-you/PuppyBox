@@ -60,7 +60,8 @@ final class FullScreenImageOverlayView: UIView, UIScrollViewDelegate, UIGestureR
         
         scrollView.snp.makeConstraints { $0.edges.equalToSuperview() }
         closeButton.snp.makeConstraints {
-            $0.top.trailing.equalToSuperview().inset(16)
+            $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(40)
+            $0.centerX.equalToSuperview()
             $0.width.height.equalTo(32)
         }
         
