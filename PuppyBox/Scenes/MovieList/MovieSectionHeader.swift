@@ -39,8 +39,7 @@ final class MovieSectionHeader: UICollectionReusableView {
     private func setupView() {
         addSubview(titleLabel)
         titleLabel.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview()
+            $0.leading.trailing.bottom.equalToSuperview()
         }
     }
 
