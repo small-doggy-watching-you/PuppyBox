@@ -184,6 +184,12 @@ final class TicketViewController: UIViewController {
     }
 
     @objc private func goToMyPage() {
-        tabBarController?.selectedIndex = 2
+        tabBarController?.selectedIndex = 2 // 마이페이지로 보내버리고
+        
+        DispatchQueue.main.async { // 홈 탭에서는 루트뷰컨트롤러로 팝해둠
+            if let homeNav = self.tabBarController?.viewControllers?.first as? UINavigationController {
+                homeNav.popToRootViewController(animated: false)
+            }
+        }
     }
 }
