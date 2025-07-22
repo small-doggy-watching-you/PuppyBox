@@ -4,12 +4,6 @@ import UIKit
 import SnapKit
 import Then
 
-@available(iOS 17.0, *)
-#Preview {
-    SignUpViewController() // 자기가 볼 뷰컨트롤러로
-}
-
-// 벡버튼 위치땜에 버튼잘림
 final class SignUpViewController: UIViewController {
     // MARK: - Properties
 
@@ -151,18 +145,20 @@ final class SignUpViewController: UIViewController {
     private let scrollView = UIScrollView()
     private let contentView = UIView()
 
+    // MARK: - Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.tintColor = .appPrimary
 
         configureUI()
-        
+
         // 빈 화면 클릭시 키보드 다운
         let tapDismissKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapDismissKeyboard.cancelsTouchesInView = false
         view.addGestureRecognizer(tapDismissKeyboard)
-        
+
         // 아이디 입력란 감지액션 추가
         idTextField.addTarget(self, action: #selector(idTextFieldDidChange(_:)), for: .editingChanged)
 
@@ -213,6 +209,9 @@ final class SignUpViewController: UIViewController {
         idTextField.becomeFirstResponder()
     }
 
+    // MARK: - Setup Methods
+
+    // 뷰에 주입
     private func configureUI() {
         let itemList = [
             logoImage,
@@ -238,6 +237,8 @@ final class SignUpViewController: UIViewController {
 
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
+
+        // 오토 레이아웃
 
         scrollView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
@@ -343,7 +344,7 @@ final class SignUpViewController: UIViewController {
 
         signUpButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(30)
-            $0.top.equalTo(phoneNumberTextField.snp.bottom).offset(25).priority(249)
+            $0.top.equalTo(phoneNumberTextField.snp.bottom).offset(25).priority(249) // 버튼을 아래 고정시키기 위해 우선도 낮춤
             $0.top.greaterThanOrEqualTo(phoneNumberTextField.snp.bottom).offset(25)
             $0.bottom.equalToSuperview().offset(-35)
             $0.height.equalTo(50)
@@ -425,7 +426,7 @@ final class SignUpViewController: UIViewController {
             return false
         }
     }
-    
+
     // 키보드 내리는 액션
     @objc
     private func dismissKeyboard() {
